@@ -193,7 +193,7 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
-    android.hardware.light@2.0-service.hiae
+    android.hardware.light@2.0-service.tulip
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
