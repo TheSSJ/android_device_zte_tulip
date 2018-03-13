@@ -16,6 +16,7 @@
 
 # Get non-open-source specific aspects
 $(call inherit-product-if-exists, vendor/zte/tulip/tulip-vendor.mk)
+$(call inherit-product-if-exists, vendor/gapps/arm64/arm64-vendor.mk)
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay

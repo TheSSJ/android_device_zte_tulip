@@ -196,3 +196,4 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 25429515776
 
 # inherit from the proprietary version
 -include vendor/zte/tulip/BoardConfigVendor.mk
+-include vendor/gapps/arm64/BoardConfigVendor.mk
