@@ -1,0 +1,12 @@
+#allow servicemanager init:binder transfer;
+allow servicemanager init:dir search;
+allow servicemanager init:file { open read };
+allow servicemanager init:process getattr;
+allow servicemanager per_mgr:dir search;
+allow servicemanager per_mgr:file { open read };
+allow servicemanager rild:dir search;
+allow servicemanager rild:file { open read };
+allow servicemanager rild:process getattr;
+allow servicemanager { hal_fingerprint_default gx_fpd_exec }:file { open read };
+allow servicemanager { hal_fingerprint_default gx_fpd_exec }:process getattr;
+allow servicemanager gx_fpd_exec:file execute_no_trans;
