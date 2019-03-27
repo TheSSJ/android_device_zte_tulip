@@ -5,5 +5,5 @@ allow hal_fingerprint_default input_device:chr_file rw_file_perms;
 allow hal_fingerprint_default sysfs_fingerprint:dir search;
 allow hal_fingerprint_default sysfs_fingerprint:file rw_file_perms;
 allow hal_fingerprint_default tee_device:chr_file rw_file_perms;
-allow hal_fingerprint_default gx_fpd_exec:service_manager add;
+allow hal_fingerprint_default gx_fpd_service:service_manager add;
 r_dir_file(hal_fingerprint_default, firmware_file)

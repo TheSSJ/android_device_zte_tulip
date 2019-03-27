@@ -62,7 +62,7 @@ open read setattr unlink write }; allow rild self:capability { chown
 sys_module }; allow rild servicemanager:binder call; 
 allow rild self:capability { dac_override dac_read_search }; 
 allow rild vendor_file:file ioctl;
-allow rild nv_data_file:file { read open getattr };
+allow rild nv_data_file:file { read open getattr lock ioctl };
 #============= sensors ==============
 allow sensors sysfs:file { open read };
 #============= servicemanager ==============
