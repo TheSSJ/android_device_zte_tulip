@@ -1,0 +1,5 @@
+type fps_hal_service, service_manager_type;
+
+binder_call(fps_hal, servicemanager);
+
+allow fps_hal fps_hal_service:service_manager { find add };

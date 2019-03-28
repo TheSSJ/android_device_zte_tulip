@@ -1,5 +1,4 @@
 # Goodix fingerprint
 goodix.fp                                 u:object_r:gx_fpd_service:s0
-android.hardware.fingerprint.IFingerprintCustomDaemon   u:object_r:gx_fpd_service:s0
-#vendor.qcom.PeripheralManager             u:object_r:peri_mgr_service:s0
+android.hardware.fingerprint.IFingerprintCustomDaemon   u:object_r:fps_hal_service:s0
 
