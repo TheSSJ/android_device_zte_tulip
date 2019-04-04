@@ -20,8 +20,8 @@
 namespace {
 using android::hardware::light::V2_0::LightState;
 
-static constexpr int RAMP_SIZE = 8; 
-//static constexpr int RAMP_STEP_DURATION = 50; 
+static constexpr int RAMP_SIZE = 8;
+//static constexpr int RAMP_STEP_DURATION = 50;
 static constexpr int BRIGHTNESS_RAMP[RAMP_SIZE] = {0, 12, 25, 37, 50, 72, 85, 100};
 static constexpr int DEFAULT_MAX_BRIGHTNESS = 255;
 
@@ -153,6 +153,27 @@ void Light::setSpeakerLightLocked(const LightState& state) {
         green = (green * alpha) / 0xff;
 	blue = (blue * alpha) / 0xff;
     }
+    //We cannot have more than one color turned on in parallel
+    if (((state.color & 0x00ffffff)==0x00ffffff) || ((state.color & 0x00ffffff)==0x00000000))
+	blue = 1; //if we have an impossible setting, assume blue...I like blue...
+
+    if (red >= blue && red >= green) {
+	red = 1;
+	blue  = 0;
+	green = 0;
+    }
+
+    if (blue >= red && blue >= green) {
+	red = 0;
+	blue = 1;
+	green = 0;
+    }
+
+    if (green >= blue && green >= red) {
+	red = 0;
+	blue = 0;
+	green = 1;
+    }
 
     switch (state.flashMode) {
         case Flash::TIMED:
@@ -169,12 +190,15 @@ void Light::setSpeakerLightLocked(const LightState& state) {
     // Disable all blinking to start
     mRedBlink << 0 << std::endl;
     mGreenBlink << 0 << std::endl;
-
+    mBlueBlink << 0 << std::endl;
     if (blink) {
         // Start the party
-        mRedBlink << 1 << std::endl;
-        mGreenBlink << 1 << std::endl;
-	mBlueBlink << 1 << std::endl;
+        if(red)
+	 mRedBlink << 1 << std::endl;
+        if(green)
+	 mGreenBlink << 1 << std::endl;
+	if(blue)
+	 mBlueBlink << 1 << std::endl;
     } else {
         if (red == 0 && green == 0 && blue == 0) {
             mRedBlink << 0 << std::endl;
