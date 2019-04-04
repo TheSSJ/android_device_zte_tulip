@@ -70,6 +70,9 @@ allow rild vendor_file:file ioctl;
 allow rild nv_data_file:file { read open getattr lock ioctl };
 #============ secdiscard =============
 allow secdiscard_exec fps_blob:file rw_file_perms;
+#============ vold =============
+allow vold secdiscard_exec:file { execute execute_no_trans getattr open read };
+#allow vold system_data_file:file {unlink link rw_file_perms };
 #============= sensors ==============
 allow sensors sysfs:file { open read };
 #============= servicemanager ==============
