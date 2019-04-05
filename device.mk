@@ -198,7 +198,8 @@ PRODUCT_PACKAGES += \
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
-    pp_calib_data_zteSAM_S6E3FA3_SAM_10801920_5P2Inch.xml
+    pp_calib_data_zteSAM_S6E3FA3_SAM_10801920_5P2Inch.xml \
+    vendor.lineage.livedisplay@2.0-service-sdm
 
 # Media
 PRODUCT_COPY_FILES += \
