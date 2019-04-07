@@ -577,7 +577,7 @@ service ril-daemon2 /vendor/bin/hw/rild -c 2
     user root
     group radio cache inet misc audio readproc wakelock net_raw wifi system drmpc sdcard_r sdcard_rw oem_2950 diag log qcom_diag
 
-servoce ril-daemon /vendor/bin/hw/rild
+service ril-daemon /vendor/bin/hw/rild
     class main
     socket rild stream 660 root radio
     socket sap_uim_socket1 stream 660 bluetooth bluetooth
