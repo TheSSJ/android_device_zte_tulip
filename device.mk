@@ -80,7 +80,6 @@ PRODUCT_PACKAGES += \
     tinymix
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/audio_effects.conf:system/etc/audio_effects.conf \
     $(LOCAL_PATH)/configs/audio_platform_info_extcodec.xml:system/vendor/etc/audio_platform_info_extcodec.xml \
     $(LOCAL_PATH)/configs/audio_platform_info.xml:system/vendor/etc/audio_platform_info.xml \
     $(LOCAL_PATH)/configs/audio_policy_configuration.xml:system/etc/audio_policy_configuration.xml \
@@ -111,6 +110,8 @@ PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-service \
     vendor.qti.hardware.camera.device@1.0 \
     vendor.qti.hardware.camera.device@1.0_vendor \
+    camera.device@1.0-impl \
+    camera.device@3.2-impl \
     camera.msm8952 \
     libshim_camera \
     Snap
@@ -161,9 +162,9 @@ PRODUCT_PACKAGES += \
     android.hardware.health@2.0-service
 
 # HIDL
-PRODUCT_PACKAGES += \
-    android.hidl.base@1.0 \
-    android.hidl.manager@1.0
+#PRODUCT_PACKAGES += \
+#    android.hidl.base@1.0 \
+#    android.hidl.manager@1.0
 
 # Init
 PRODUCT_PACKAGES += \
@@ -251,7 +252,7 @@ PRODUCT_PACKAGES += \
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.0-service-qti
+    android.hardware.power@1.1-service-qti
 
 # QMI
 PRODUCT_PACKAGES += \
