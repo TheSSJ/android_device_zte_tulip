@@ -668,5 +668,5 @@ service time_daemon /system/vendor/bin/time_daemon
 service wcnss-service /system/vendor/bin/wcnss_service
     class late_start
     user system
-    group system wifi radio
+    group oem_2950 system wifi radio
     oneshot
