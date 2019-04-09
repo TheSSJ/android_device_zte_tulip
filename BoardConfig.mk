@@ -90,8 +90,10 @@ QCOM_BT_USE_SMD_TTY := true
 # Camera
 TARGET_USES_MEDIA_EXTENSIONS := true
 USE_DEVICE_SPECIFIC_CAMERA := true
-NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true #test to see if video recording will work with this
 TARGET_USES_QTI_CAMERA_DEVICE := true
+
+# Charger
+BOARD_CHARGER_DISABLE_INIT_BLANK := true
 
 # CNE
 BOARD_USES_QCNE := true
@@ -143,7 +145,7 @@ BOARD_NFC_HAL_SUFFIX := msm8952
 TARGET_HAS_NO_WLAN_STATS := true
 TARGET_RPM_SYSTEM_STAT := /d/rpm_stats
 #TARGET_HAS_NO_POWER_STATS := true
-TARGET_HAS_LEGACY_POWER_STATS := true
+#TARGET_HAS_LEGACY_POWER_STATS := true
 TARGET_USES_INTERACTION_BOOST := true
 
 # Properties
@@ -175,8 +177,9 @@ TW_INCLUDE_CRYPTO := true
 endif
 
 # RIL
-TARGET_RIL_VARIANT := caf
-
+#TARGET_RIL_VARIANT := caf
+BOARD_GLOBAL_CFLAGS += -DUSE_RIL_VERSION_11
+ENABLE_VENDOR_RIL_SERVICE := true
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
 include device/qcom/sepolicy/legacy-sepolicy.mk
@@ -195,6 +198,8 @@ PRODUCT_VENDOR_MOVE_ENABLED := true
 TARGET_PROVIDES_WCNSS_QMI   := true
 TARGET_USES_WCNSS_CTRL      := true
 TARGET_USES_QCOM_WCNSS_QMI  := true
+
+TARGET_USES_WCNSS_MAC_ADDR_REV := true
 WIFI_DRIVER_FW_PATH_AP      := "ap"
 WIFI_DRIVER_FW_PATH_STA     := "sta"
 
@@ -206,7 +211,7 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 314572800
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4294967296
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 25429515776
-TARGET_EXFAT_DRIVER := sdfat
+TARGET_EXFAT_DRIVER := exfat
 # inherit from the proprietary version
 -include vendor/zte/tulip/BoardConfigVendor.mk
 -include vendor/gapps/arm64/BoardConfigVendor.mk
