@@ -145,7 +145,7 @@ BOARD_NFC_HAL_SUFFIX := msm8952
 TARGET_HAS_NO_WLAN_STATS := true
 TARGET_RPM_SYSTEM_STAT := /d/rpm_stats
 #TARGET_HAS_NO_POWER_STATS := true
-#TARGET_HAS_LEGACY_POWER_STATS := true
+TARGET_HAS_LEGACY_POWER_STATS := true
 TARGET_USES_INTERACTION_BOOST := true
 
 # Properties
@@ -178,8 +178,9 @@ endif
 
 # RIL
 TARGET_RIL_VARIANT := caf
-BOARD_GLOBAL_CFLAGS += -DUSE_RIL_VERSION_11
-ENABLE_VENDOR_RIL_SERVICE := true
+#BOARD_GLOBAL_CFLAGS += -DUSE_RIL_VERSION_11
+#ENABLE_VENDOR_RIL_SERVICE := true
+
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
 include device/qcom/sepolicy/legacy-sepolicy.mk
