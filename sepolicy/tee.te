@@ -1,2 +1,0 @@
-allow tee gx_fpd_data_file:dir { search open read };
-
