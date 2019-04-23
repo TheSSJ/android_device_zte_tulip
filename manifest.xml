@@ -37,19 +37,43 @@
     </hal>
     <hal format="hidl">
         <name>android.hardware.camera.provider</name>
-        <transport arch="32+64">passthrough</transport>
+        <transport>hwbinder</transport>
         <version>2.4</version>
         <interface>
             <name>ICameraProvider</name>
             <instance>legacy/0</instance>
         </interface>
     </hal>
+    <hal>
+	<name>android.hardware.cas</name>
+	<transport>hwbinder</transport>
+	<version>1.0</version>
+	<interface>
+	  <name>IMediaCasService</name>
+	  <instance>default</instance>
+	</interface>
+    </hal>
     <hal format="hidl">
         <name>android.hardware.configstore</name>
         <transport>hwbinder</transport>
-        <version>1.0</version>
+        <version>1.1</version>
         <interface>
             <name>ISurfaceFlingerConfigs</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.drm</name>
+        <transport>hwbinder</transport>
+        <version>1.1</version>
+        <interface>
+            <name>ICryptoFactory</name>
+            <instance>clearkey</instance>
+            <instance>default</instance>
+        </interface>
+        <interface>
+            <name>IDrmFactory</name>
+            <instance>clearkey</instance>
             <instance>default</instance>
         </interface>
     </hal>
@@ -97,7 +121,7 @@
     <hal format="hidl">
         <name>android.hardware.health</name>
         <transport>hwbinder</transport>
-        <version>1.0</version>
+        <version>2.0</version>
         <interface>
             <name>IHealth</name>
             <instance>default</instance>
@@ -114,7 +138,7 @@
     </hal>
     <hal format="hidl">
         <name>android.hardware.light</name>
-        <transport arch="32+64">passthrough</transport>
+        <transport>hwbinder</transport>
         <version>2.0</version>
         <interface>
             <name>ILight</name>
@@ -173,7 +197,7 @@
     <hal format="hidl">
         <name>android.hardware.radio</name>
         <transport>hwbinder</transport>
-        <version>1.0</version>
+        <version>1.1</version>
         <interface>
             <name>IRadio</name>
             <instance>slot1</instance>
@@ -243,7 +267,7 @@
     <hal format="hidl">
         <name>android.hardware.wifi</name>
         <transport>hwbinder</transport>
-        <version>1.0</version>
+        <version>1.2</version>
         <interface>
             <name>IWifi</name>
             <instance>default</instance>
@@ -252,9 +276,27 @@
     <hal format="hidl">
         <name>android.hardware.wifi.supplicant</name>
         <transport>hwbinder</transport>
-        <version>1.0</version>
+        <version>1.1</version>
         <interface>
             <name>ISupplicant</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.lineage.power</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>ILineagePower</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.lineage.trust</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IUsbRestrict</name>
             <instance>default</instance>
         </interface>
     </hal>

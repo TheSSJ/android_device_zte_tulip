@@ -20,9 +20,9 @@
 namespace {
 using android::hardware::light::V2_0::LightState;
 
-static constexpr int RAMP_SIZE = 8;
+//static constexpr int RAMP_SIZE = 8;
 //static constexpr int RAMP_STEP_DURATION = 50;
-static constexpr int BRIGHTNESS_RAMP[RAMP_SIZE] = {0, 12, 25, 37, 50, 72, 85, 100};
+//static constexpr int BRIGHTNESS_RAMP[RAMP_SIZE] = {0, 12, 25, 37, 50, 72, 85, 100};
 static constexpr int DEFAULT_MAX_BRIGHTNESS = 255;
 
 static uint32_t rgbToBrightness(const LightState& state) {
@@ -32,16 +32,6 @@ static uint32_t rgbToBrightness(const LightState& state) {
 
 static bool isLit(const LightState& state) {
     return (state.color & 0x00ffffff);
-}
-
-static std::string getScaledDutyPcts(int brightness) {
-    std::string buf, pad;
-    for (auto i : BRIGHTNESS_RAMP) {
-        buf += pad;
-        buf += std::to_string(i * brightness / 255);
-        pad = ",";
-    }
-    return buf;
 }
 }  // anonymous namespace
 namespace android {
@@ -146,7 +136,7 @@ void Light::setSpeakerLightLocked(const LightState& state) {
     // Retrieve each of the RGB colors
     red = (state.color >> 16) & 0xff;
     green = (state.color >> 8) & 0xff;
-    blue = (state.color) && 0xff;
+    blue = (state.color) & 0xff;
     // Scale RGB colors if a brightness has been applied by the user
     if (alpha != 0xff) {
         red = (red * alpha) / 0xff;

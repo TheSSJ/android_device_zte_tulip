@@ -100,9 +100,14 @@ etc/firmware/ak4962_pram_voice_recognition.bin
 etc/firmware/ak4962_pram_wide.bin
 
 # Bluetooth
-bin/hci_qcomm_init:vendor/bin/hci_qcomm_init
-bin/wcnss_filter:vendor/bin/wcnss_filter
-vendor/lib64/libbtnv.so
+#bin/hci_qcomm_init:vendor/bin/hci_qcomm_init
+#bin/wcnss_filter:vendor/bin/wcnss_filter
+#vendor/lib64/libbtnv.so
+vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti|9178856dc8651b499d1b155825b6115a486ee05e
+vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc|a979981c55f3dcaf6cf2212e71b901ca4d58b959
+vendor/lib64/hw/android.hardware.bluetooth@1.0-impl-qti.so|20e66aaca57c6ba6df8009404abdfacb608dc341
+vendor/lib64/libbtnv.so|136dc47f7d16a841e9c6ad909753e96a41392534
+vendor/lib64/libbt-hidlclient.so|0b0b69ef9787e3cd5409f0050cad03698dd6ce26
 
 # Camera
 bin/mm-qcamera-daemon:vendor/bin/mm-qcamera-daemon
@@ -428,12 +433,16 @@ vendor/lib64/libthermalioctl.so
 vendor/lib/libthermalclient.so
 
 # Time services
--app/TimeService/TimeService.apk
-bin/time_daemon:vendor/bin/time_daemon
--vendor/lib64/libtime_genoff.so
--vendor/lib64/libTimeService.so
--vendor/lib/libtime_genoff.so
--vendor/lib/libTimeService.so
+#-app/TimeService/TimeService.apk
+#bin/time_daemon:vendor/bin/time_daemon
+#-vendor/lib64/libtime_genoff.so
+#-vendor/lib64/libTimeService.so
+#-vendor/lib/libtime_genoff.so
+#-vendor/lib/libTimeService.so
+-vendor/app/TimeService/TimeService.apk|25337e4160093a998c0e4cfced1c1a6c51177dff
+vendor/bin/time_daemon|757b977a7e6fab2c56b669f0922a74d5af28dd27
+vendor/lib/libtime_genoff.so|cd2475946a64850658974274b888362b24e1f316
+vendor/lib64/libtime_genoff.so|de6f521a43174b748043790cc23181e88560fe32
 
 # Widevine
 vendor/lib/libWVStreamControlAPI_L3.so
