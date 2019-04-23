@@ -158,4 +158,4 @@ on property:sys.boot_completed=1
     write /sys/module/process_reclaim/parameters/swap_opt_eff 30
 
     rm /data/system/perfd/default_values
-    start perfd
+    start vendor.perfd
