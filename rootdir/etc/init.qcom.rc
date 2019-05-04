@@ -34,6 +34,7 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
     setprop ro.wcnss.serialno ${ro.boot.serialno}
+    symlink /dev/pn548 /dev/pn54x
 
 on init
     # Set permissions for persist partition
@@ -181,6 +182,9 @@ on post-fs-data
     mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
+    mkdir /data/vendor/wifi 0771 wifi wifi
+    mkdir /data/vendor/wifi/wpa 0770 wifi wifi
+    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
 
     # Create the directories used by CnE subsystem
     mkdir /data/connectivity 0771 system system
@@ -260,6 +264,7 @@ on post-fs-data
     # NFC local data and nfcee xml storage
     mkdir /data/nfc 0770 nfc nfc
     mkdir /data/nfc/param 0770 nfc nfc
+    mkdir /data/vendor/nfc 0770 nfc nfc
 
     # Sensor
     mkdir /persist/sensors 0775 system system
@@ -299,23 +304,16 @@ on post-fs-data
     mkdir /tombstones/dsps 0771 system system
 
     mkdir /data/system/fingerprint 0700 system system
-    mkdir /data/vendor/wifi 0771 wifi wifi
-    mkdir /data/vendor/wifi/wpa 0770 wifi wifi
-    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
     
     setprop vold.post_fs_data_done 1
 
 on property:vold.decrypt=trigger_restart_framework
-    start vendor.qcom-c_main-sh
-    start vendor.config_bt_addr
+    start vendor.config_bdaddr
     start vendor.hciattach
     start vendor.wcnss-service
 
     # Wifi firmware reload path
     chown wifi wifi /sys/module/wlan/parameters/fwpath
-
-    # Bluetooth MAC address
-   # chown bluetooth bluetooth /sys/module/htc_bdaddress/parameters/bdaddress
 
 # Services begin here
 
@@ -518,55 +516,55 @@ service wpa_supplicant /system/vendor/bin/hw/wpa_supplicant \
    disabled
    oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
-    class late_start
-    disabled
-    oneshot
+#service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
+#    class late_start
+#    disabled
+#    oneshot
 
-service dhcpcd_p2p /system/bin/dhcpcd -ABKLG
-    class late_start
-    disabled
-    oneshot
+#service dhcpcd_p2p /system/bin/dhcpcd -ABKLG
+#    class late_start
+#    disabled
+#    oneshot
 
-service iprenew_wlan0 /system/bin/dhcpcd -n
-    class late_start
-    disabled
-    oneshot
+#service iprenew_wlan0 /system/bin/dhcpcd -n
+#    class late_start
+#    disabled
+#    oneshot
 
-service iprenew_p2p /system/bin/dhcpcd -n
-    class late_start
-    disabled
-    oneshot
+#service iprenew_p2p /system/bin/dhcpcd -n
+#    class late_start
+#    disabled
+#    oneshot
 
-service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
-    class late_start
-    disabled
-    oneshot
+#service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
+#    class late_start
+#    disabled
+#    oneshot
 
-service iprenew_bt-pan /system/bin/dhcpcd -n
-    class late_start
-    disabled
-    oneshot
+#service iprenew_bt-pan /system/bin/dhcpcd -n
+#    class late_start
+#    disabled
+#    oneshot
 
-service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
-    disabled
-    oneshot
+#service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
+#    disabled
+#    oneshot
 
-service dhcpcd_bnep1 /system/bin/dhcpcd -BKLG
-    disabled
-    oneshot
+#service dhcpcd_bnep1 /system/bin/dhcpcd -BKLG
+#    disabled
+#    oneshot
 
-service dhcpcd_bnep2 /system/bin/dhcpcd -BKLG
-    disabled
-    oneshot
+#service dhcpcd_bnep2 /system/bin/dhcpcd -BKLG
+#    disabled
+#    oneshot
 
-service dhcpcd_bnep3 /system/bin/dhcpcd -BKLG
-    disabled
-    oneshot
+#service dhcpcd_bnep3 /system/bin/dhcpcd -BKLG
+#    disabled
+#    oneshot
 
-service dhcpcd_bnep4 /system/bin/dhcpcd -BKLG
-    disabled
-    oneshot
+#service dhcpcd_bnep4 /system/bin/dhcpcd -BKLG
+#    disabled
+#    oneshot
 
 service vendor.irsc_util /system/vendor/bin/irsc_util "/etc/sec_config"
     class main

@@ -100,6 +100,11 @@ case $exit_code_hci_qcomm_init in
      exit $exit_code_hci_qcomm_init;;
 esac
 
+# Dirty hack, set persist.service.bdroid.bdaddr here to make BT find its MAC Address
+INPUT=`/system/vendor/bin/hci_qcomm_init -e -P 2 | grep -i BTS_ADDRESS=`
+SUBSTRING="${INPUT:12:17}"
+setprop persist.service.bdroid.bdaddr "${SUBSTRING}"
+
 setprop vendor.bluetooth.status on
 
 exit 0

@@ -22,3 +22,20 @@ extern "C" int _ZN7android13GraphicBuffer10reallocateEjjijy(unsigned int, unsign
 extern "C" int _ZN7android13GraphicBuffer10reallocateEjjij(unsigned int inWidth, unsigned int inHeight, int inFormat, unsigned int inUsage) {
   return _ZN7android13GraphicBuffer10reallocateEjjijy(inWidth, inHeight, inFormat, 1, inUsage);
 }
+
+// android::Fence::~Fence()
+extern "C" void _ZN7android5FenceD1Ev() {
+  // no-op, the explicit destructor was replaced with = default;
+}
+
+extern "C" void _ZN7android13GraphicBufferC1EjjijNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE(
+    uint32_t inWidth, uint32_t inHeight, int inFormat, uint32_t inUsage,
+    std::string requestorName);
+
+extern "C" void _ZN7android13GraphicBufferC1Ejjij(
+    uint32_t inWidth, uint32_t inHeight, int inFormat, uint32_t inUsage) {
+  std::string requestorName = "<Unknown>";
+  _ZN7android13GraphicBufferC1EjjijNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE(
+      inWidth, inHeight, inFormat, inUsage, requestorName);
+}
+
