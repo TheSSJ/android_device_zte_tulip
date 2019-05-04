@@ -366,6 +366,8 @@ service vendor.config_bdaddr /system/vendor/bin/bt_mac_writer -O
     user bluetooth
     group bluetooth radio oem_2950
     seclabel u:r:qti_init_shell:s0
+    oneshot
+    disabled
 
 service vendor.hciattach /system/vendor/bin/init.qcom.bt.sh
     class late_start
