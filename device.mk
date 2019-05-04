@@ -252,11 +252,9 @@ PRODUCT_PACKAGES += \
 
 # NFC
 PRODUCT_PACKAGES += \
-    android.hardware.nfc@1.1-service \
     com.android.nfc_extras \
     NfcNci \
-    Tag \
-    nfc_nci.msm8952
+    Tag
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-nci.conf \
