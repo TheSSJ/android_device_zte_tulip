@@ -113,6 +113,9 @@ PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0-service \
     libbt-vendor
 
+PRODUCT_PACKAGES += \
+    Gello
+
 # Camera
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
@@ -127,16 +130,16 @@ PRODUCT_COPY_FILES +=  \
 PRODUCT_PACKAGES += \
     charger_res_images
 
+#    android.hardware.graphics.allocator@2.0-service \
+#    android.hardware.graphics.composer@2.1-service \
+
 # Display
 PRODUCT_PACKAGES += \
     android.hardware.graphics.allocator@2.0-impl \
-    android.hardware.graphics.allocator@2.0-service \
     android.hardware.graphics.composer@2.1-impl \
-    android.hardware.graphics.composer@2.1-service \
     android.hardware.graphics.mapper@2.0-impl \
     android.hardware.memtrack@1.0-impl \
     android.hardware.memtrack@1.0-service \
-    libdisplayconfig \
     copybit.msm8952 \
     gralloc.msm8952 \
     hwcomposer.msm8952 \
@@ -300,11 +303,7 @@ PRODUCT_PACKAGES += \
     libcurl \
     libxml2 \
     libjson \
-    android.hardware.radio.config@1.0 \
-    telephony-ext
-
-PRODUCT_BOOT_JARS += \
-    telephony-ext
+    android.hardware.radio.config@1.0
 
 # Seccomp
 PRODUCT_COPY_FILES += \
