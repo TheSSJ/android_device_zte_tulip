@@ -166,8 +166,16 @@ PRODUCT_PACKAGES += \
 
 # GPS
 PRODUCT_PACKAGES += \
-    android.hardware.gnss@1.0-impl \
-    libshim_gps
+     libgps.utils \
+     gps.default \
+     libgnss \
+     liblocation_api \
+     android.hardware.gnss@1.1-impl-qti \
+     android.hardware.gnss@1.1-impl-service \
+     libloc_api-rpc-qc
+
+#    android.hardware.gnss@1.0-impl \
+#    libshim_gps
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/flp.conf:system/etc/flp.conf \
@@ -340,6 +348,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
+
+# VNDK
+PRODUCT_PACKAGES += \
+    vndk-sp
 
 # Wifi
 PRODUCT_PACKAGES += \
