@@ -117,11 +117,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
     camera.msm8952 \
-    libshim_camera \
-    Snap
-
-PRODUCT_COPY_FILES +=  \
-    $(LOCAL_PATH)/configs/external_camera_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/external_camera_config.xml
+    libshim_camera
 
 # Charger
 PRODUCT_PACKAGES += \
@@ -163,16 +159,8 @@ PRODUCT_PACKAGES += \
 
 # GPS
 PRODUCT_PACKAGES += \
-     libgps.utils \
-     gps.default \
-     libgnss \
-     liblocation_api \
-     android.hardware.gnss@1.1-impl-qti \
-     android.hardware.gnss@1.1-impl-service \
-     libloc_api-rpc-qc
-
-#    android.hardware.gnss@1.0-impl \
-#    libshim_gps
+    android.hardware.gnss@1.0-impl \
+    libshim_gps
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/flp.conf:system/etc/flp.conf \
@@ -308,11 +296,7 @@ PRODUCT_PACKAGES += \
     libcurl \
     libxml2 \
     libjson \
-    android.hardware.radio.config@1.0 \
-    telephony-ext
-
-PRODUCT_BOOT_JARS += \
-    telephony-ext
+    android.hardware.radio.config@1.0
 
 # Seccomp
 PRODUCT_COPY_FILES += \
@@ -349,10 +333,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
-
-# VNDK
-PRODUCT_PACKAGES += \
-    vndk-sp
 
 # Wifi
 PRODUCT_PACKAGES += \
