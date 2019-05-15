@@ -116,6 +116,8 @@ on boot
     chmod 2770 /dev/socket/qmux_bluetooth
     mkdir /dev/socket/qmux_gps 0770 gps gps
     chmod 2770 /dev/socket/qmux_gps
+    mkdir /dev/socket/qmux_nfc 0770 nfc nfc
+    chmod 2770 /dev/socket/qmux_nfc
 
     mkdir /persist/drm 0770 system system
     mkdir /persist/bluetooth 0770 bluetooth bluetooth
