@@ -20,9 +20,6 @@
 namespace {
 using android::hardware::light::V2_0::LightState;
 
-//static constexpr int RAMP_SIZE = 8;
-//static constexpr int RAMP_STEP_DURATION = 50;
-//static constexpr int BRIGHTNESS_RAMP[RAMP_SIZE] = {0, 12, 25, 37, 50, 72, 85, 100};
 static constexpr int DEFAULT_MAX_BRIGHTNESS = 255;
 
 static uint32_t rgbToBrightness(const LightState& state) {
@@ -90,9 +87,9 @@ void Light::setLcdBacklight(const LightState& state) {
     // If max panel brightness is not the default (255),
     // apply linear scaling across the accepted range.
     if (mLcdBacklight.second != DEFAULT_MAX_BRIGHTNESS) {
-        int old_brightness = brightness;
+//        int old_brightness = brightness;
         brightness = brightness * mLcdBacklight.second / DEFAULT_MAX_BRIGHTNESS;
-        LOG(VERBOSE) << "scaling brightness " << old_brightness << " => " << brightness;
+//        LOG(VERBOSE) << "scaling brightness " << old_brightness << " => " << brightness;
     }
     mLcdBacklight.first << brightness << std::endl;
 }
@@ -148,21 +145,18 @@ void Light::setSpeakerLightLocked(const LightState& state) {
 	blue = 1; //if we have an impossible setting, assume blue...I like blue...
 
     if (red >= blue && red >= green) {
-	red = 1;
 	blue  = 0;
 	green = 0;
     }
 
     if (blue >= red && blue >= green) {
 	red = 0;
-	blue = 1;
 	green = 0;
     }
 
     if (green >= blue && green >= red) {
 	red = 0;
 	blue = 0;
-	green = 1;
     }
 
     switch (state.flashMode) {
@@ -195,9 +189,11 @@ void Light::setSpeakerLightLocked(const LightState& state) {
             mGreenBlink << 0 << std::endl;
 	    mBlueBlink << 0 << std::endl;
         }
+	else {
         mRedLed << red << std::endl;
         mGreenLed << green << std::endl;
 	mBlueLed << blue << std::endl;
+	}
     }
 }
 
