@@ -19,7 +19,9 @@ BOARD_VENDOR := zte
 LOCAL_PATH := device/zte/tulip
 
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
-
+PRODUCT_SHIPPING_API_LEVEL := 23
+TARGET_CPU_CORTEX_A53 := true
+MALLOC_SVELTE := true
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -44,7 +46,7 @@ TARGET_NO_BOOTLOADER := true
 
 # Kernel
 BOARD_KERNEL_BASE := 0x80000000
-BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlyprintk ramoops.mem_address=0x9fd00000 ramoops.mem_size=0x200000 ramoops.console_size=0x100000 
+BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlyprintk ramoops.mem_address=0x9fd00000 ramoops.mem_size=0x200000 ramoops.console_size=0x100000
 BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE := 4096
@@ -54,8 +56,6 @@ BOARD_RAMDISK_OFFSET := 0x01000000
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/zte/msm8952
 TARGET_KERNEL_CONFIG := lineage_tulip_defconfig
-#KERNEL_TOOLCHAIN := ../../../prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-4.9/bin
-#TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-eabi-
 
 # Audio
 AUDIO_FEATURE_ENABLED_ACDB_LICENSE := true
@@ -82,6 +82,7 @@ USE_XML_AUDIO_POLICY_CONF := 1
 
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
+BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_QCOM := true
 BLUETOOTH_HCI_USE_MCT := true
 QCOM_BT_READ_ADDR_FROM_PROP := true
@@ -90,13 +91,7 @@ QCOM_BT_READ_ADDR_FROM_PROP := true
 TARGET_USES_MEDIA_EXTENSIONS := true
 USE_DEVICE_SPECIFIC_CAMERA := true
 TARGET_USES_NON_TREBLE_CAMERA := true
-
-# Charger
-BOARD_CHARGER_DISABLE_INIT_BLANK := true
-
-# CNE
-BOARD_USES_QCNE := true
-
+TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
 # Display
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 SF_VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
@@ -106,10 +101,15 @@ TARGET_USES_ION := true
 TARGET_USES_OVERLAY := true
 USE_OPENGL_RENDERER := true
 VSYNC_EVENT_PHASE_OFFSET_NS := 6000000
+TARGET_USES_GRALLOC1 := true
+TARGET_USES_NEW_ION_API := true
+TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
+MAX_VIRTUAL_DISPLAY_DIMENSION := 4096
 MAX_EGL_CACHE_KEY_SIZE := 12*1024
 MAX_EGL_CACHE_SIZE := 2048*1024
-HAVE_ADRENO_SOURCE := false
-OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
+
+HAVE_ADRENO_SOURCE:= false
+OVERRIDE_RS_DRIVER:= libRSDriver_adreno.so
 
 # Encryption
 TARGET_HW_DISK_ENCRYPTION := true
@@ -121,7 +121,6 @@ TARGET_ALLOW_LEGACY_AIDS := true
 TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
-#TARGET_USES_MKE2FS := true
 
 # HIDL
 DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
@@ -130,17 +129,11 @@ DEVICE_MATRIX_FILE := $(LOCAL_PATH)/compatibility_matrix.xml
 # IPA
 USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
-# Keylayout
-PRODUCT_COPY_FILES := $(filter-out frameworks/base/data/keyboards/qwerty.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/qwerty.kl, $(PRODUCT_COPY_FILES))
-
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
-
-# Malloc
-MALLOC_SVELTE := true
 
 # NFC
 BOARD_NFC_CHIPSET := pn548
@@ -184,9 +177,8 @@ endif
 TARGET_RIL_VARIANT := caf
 
 # SELinux
-#include device/qcom/sepolicy/sepolicy.mk
-include device/qcom/sepolicy-legacy/sepolicy.mk
-BOARD_SEPOLICY_DIRS += device/zte/tulip/sepolicy
+include device/qcom/sepolicy/sepolicy.mk
+BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy
 
 # Wifi
 WPA_SUPPLICANT_VERSION      := VER_0_8_X
@@ -198,13 +190,12 @@ BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 BOARD_HOSTAPD_DRIVER        := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 PRODUCT_VENDOR_MOVE_ENABLED := true
-TARGET_USES_WCNSS_CTRL      := true
 TARGET_PROVIDES_WCNSS_QMI   := true
+TARGET_USES_WCNSS_CTRL      := true
 TARGET_USES_QCOM_WCNSS_QMI  := true
 WIFI_DRIVER_FW_PATH_AP      := "ap"
 WIFI_DRIVER_FW_PATH_STA     := "sta"
 
-#Misc
 VENDOR_SECURITY_PATCH := 2017-09-01
 TARGET_OTA_ASSERT_DEVICE := tulip
 
@@ -214,7 +205,7 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 314572800
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4294967296
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 25429515776
-TARGET_EXFAT_DRIVER := exfat
+
 # inherit from the proprietary version
 -include vendor/zte/tulip/BoardConfigVendor.mk
 -include vendor/gapps/arm64/BoardConfigVendor.mk

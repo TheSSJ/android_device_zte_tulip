@@ -24,9 +24,9 @@ VENDOR=zte
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 
-LINEAGE_ROOT="$MY_DIR"/../../..
+CM_ROOT="$MY_DIR"/../../..
 
-HELPER="$LINEAGE_ROOT"/vendor/lineage/build/tools/extract_utils.sh
+HELPER="$CM_ROOT"/vendor/lineage/build/tools/extract_utils.sh
 if [ ! -f "$HELPER" ]; then
     echo "Unable to find helper script at $HELPER"
     exit 1
@@ -50,12 +50,12 @@ else
 fi
 
 # Initialize the helper
-setup_vendor "$DEVICE" "$VENDOR" "$LINEAGE_ROOT"
+setup_vendor "$DEVICE" "$VENDOR" "$CM_ROOT"
 
 extract "$MY_DIR"/proprietary-files.txt "$SRC"
 
 # qseecomd linkage for recovery
-RECOVERY_QSEECOMD="$LINEAGE_ROOT/vendor/$VENDOR/$DEVICE/proprietary/recovery/root/sbin/qseecomd"
+RECOVERY_QSEECOMD="$CM_ROOT/vendor/$VENDOR/$DEVICE/proprietary/recovery/root/sbin/qseecomd"
 if [ -f "$RECOVERY_QSEECOMD" ]; then
   sed 's@/system/bin/linker64@/sbin/linker64\x0\x0\x0\x0\x0\x0@' \
       < "$RECOVERY_QSEECOMD" \

@@ -24,6 +24,14 @@
         </interface>
     </hal>
     <hal format="hidl" optional="false">
+	<name>android.system.net.netd</name>
+	<version>1.0</version>
+	<interface>
+	   <name>INetd</name>
+	   <instance>default</instance>
+	</interface>
+    </hal>
+    <hal format="hidl" optional="false">
         <name>android.hidl.manager</name>
         <version>1.0</version>
         <interface>
@@ -37,14 +45,6 @@
         <interface>
             <name>IMapper</name>
             <instance>ashmem</instance>
-        </interface>
-    </hal>
-    <hal format="hidl" optional="false">
-        <name>android.system.net.netd</name>
-        <version>1.0</version>
-        <interface>
-            <name>INetd</name>
-            <instance>default</instance>
         </interface>
     </hal>
     <hal format="hidl" optional="false">
@@ -63,6 +63,5 @@
             <instance>default</instance>
         </interface>
     </hal>
-
 </compatibility-matrix>
 
