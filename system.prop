@@ -78,6 +78,7 @@ persist.hwc.mdpcomp.enable=true
 persist.hwc.downscale_threshold=1.15
 ro.opengles.version=196609
 ro.sf.lcd_density=480
+ro.sf.disable_triple_buffer=0
 
 # Factory Reset Protection
 ro.frp.pst=/dev/block/platform/soc.0/7824900.sdhci/by-name/config
@@ -144,10 +145,6 @@ ro.telephony.call_ring.multiple=false
 
 ro.ril.oem.ecclist=911
 ro.ril.oem.nosim.ecclist=911
-
-# Disable sdcardfs for now
-#ro.sys.sdcardfs=false
-#persist.sys.sdcardfs=false
 
 # Wifi
 wifi.interface=wlan0
