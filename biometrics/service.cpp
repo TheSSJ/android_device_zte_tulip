@@ -39,7 +39,7 @@ using android::hardware::joinRpcThreadpool;
 using android::sp;
 
 int main() {
-    ALOGE("Start fingerprintd");
+    ALOGI("Start fingerprintd");
     android::sp<android::IServiceManager> serviceManager = android::defaultServiceManager();
     android::sp<android::FingerprintDaemonProxy> proxy =
             android::FingerprintDaemonProxy::getInstance();
@@ -50,7 +50,7 @@ int main() {
         return -1;
     }
 
-    ALOGE("Start biometrics");
+    ALOGI("Start biometrics");
     android::sp<IBiometricsFingerprint> bio = BiometricsFingerprint::getInstance();
     configureRpcThreadpool(1, false /*callerWillJoin*/);
     if (bio != nullptr) {
