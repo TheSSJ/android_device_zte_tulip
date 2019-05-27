@@ -46,7 +46,7 @@ fingerprint_device_t* getWrapperService(fingerprint_notify_t notify) {
     int64_t ret = 0;
     do {
         if (g_service == NULL) {
-            ALOGE("getService g_servie is NULL");
+            //ALOGE("getService g_service is NULL");
 
             sp<IServiceManager> sm = defaultServiceManager();
             sp<IBinder> binder = sm->getService(android::FingerprintDaemonProxy::descriptor);
@@ -59,7 +59,7 @@ fingerprint_device_t* getWrapperService(fingerprint_notify_t notify) {
             binder->linkToDeath(gDeathRecipient, NULL, 0);
 
             if (g_service != NULL) {
-                ALOGE("getService succeed");
+                ALOGI("getService succeed");
                 sp<android::FingerprintDaemonCallbackProxy> callback =
                         new FingerprintDaemonCallbackProxy();
                 FingerprintDaemonCallbackProxy::setDevice(notify);
