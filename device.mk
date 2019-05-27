@@ -138,8 +138,6 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@2.0-impl \
     android.hardware.memtrack@1.0-impl \
     android.hardware.memtrack@1.0-service \
-    libdisplayconfig \
-    libhwc2on1adapter \
     copybit.msm8952 \
     gralloc.msm8952 \
     hwcomposer.msm8952 \
@@ -218,8 +216,8 @@ PRODUCT_COPY_FILES += \
 
 # Keymaster
 PRODUCT_PACKAGES += \
-    android.hardware.keymaster@3.0-impl \
-    android.hardware.keymaster@3.0-service
+    android.hardware.keymaster@4.0-impl \
+    android.hardware.keymaster@4.0-service
 
 # Lights
 PRODUCT_PACKAGES += \
