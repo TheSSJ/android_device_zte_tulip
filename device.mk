@@ -119,6 +119,7 @@ PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-service \
     camera.msm8952 \
     libsensorndkbridge \
+    libshims_qcamera-daemon \
     libshim_camera \
     Snap
 
@@ -216,8 +217,8 @@ PRODUCT_COPY_FILES += \
 
 # Keymaster
 PRODUCT_PACKAGES += \
-    android.hardware.keymaster@4.0-impl \
-    android.hardware.keymaster@4.0-service
+    android.hardware.keymaster@3.0-impl \
+    android.hardware.keymaster@3.0-service
 
 # Lights
 PRODUCT_PACKAGES += \
@@ -351,4 +352,14 @@ PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
     libcurl \
     libjson
+
+PRODUCT_PACKAGES += \
+    ebtables \
+    ethertypes \
+    libebtc
+
+PRODUCT_PACKAGES += \
+    netutils-wrapper-1.0 \
+    android.system.net.netd@1.0 \
+    libandroid_net
 
