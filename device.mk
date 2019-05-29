@@ -111,14 +111,12 @@ PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0-service \
     libbt-vendor
 
-
 # Camera
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
-    camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-service \
     camera.msm8952 \
-    libsensorndkbridge \
+    camera.device@3.2-impl \
     libshims_qcamera-daemon \
     libshim_camera \
     Snap
