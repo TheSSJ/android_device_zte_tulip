@@ -1,0 +1,3 @@
+<resources>
+    <bool name="call_recording_enabled">true</bool>
+</resources>
