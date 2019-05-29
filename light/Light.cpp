@@ -76,12 +76,14 @@ Return<void> Light::getSupportedTypes(getSupportedTypes_cb _hidl_cb) {
 }
 
 void Light::setAttentionLight(const LightState& state) {
+    LOG(VERBOSE) << "Enter setAttentionLight" ;
     std::lock_guard<std::mutex> lock(mLock);
     mAttentionState = state;
     setSpeakerBatteryLightLocked();
 }
 
 void Light::setLcdBacklight(const LightState& state) {
+    LOG(VERBOSE) << "Enter setLcdBacklight" ;
     std::lock_guard<std::mutex> lock(mLock);
     uint32_t brightness = rgbToBrightness(state);
     // If max panel brightness is not the default (255),
@@ -95,12 +97,14 @@ void Light::setLcdBacklight(const LightState& state) {
 }
 
 void Light::setBatteryLight(const LightState& state) {
+    LOG(VERBOSE) << "Enter setBatteryLight";
     std::lock_guard<std::mutex> lock(mLock);
     mBatteryState = state;
     setSpeakerBatteryLightLocked();
 }
 
 void Light::setNotificationLight(const LightState& state) {
+    LOG(VERBOSE) << "Enter setNotificationLight";
     std::lock_guard<std::mutex> lock(mLock);
     mNotificationState = state;
     setSpeakerBatteryLightLocked();
@@ -142,7 +146,11 @@ void Light::setSpeakerLightLocked(const LightState& state) {
     }
     //We cannot have more than one color turned on in parallel
     if (((state.color & 0x00ffffff)==0x00ffffff) || ((state.color & 0x00ffffff)==0x00000000))
-	blue = 1; //if we have an impossible setting, assume blue...I like blue...
+	{
+		blue = 255; //if we have an impossible setting, assume blue
+		red = 0;
+		green = 0;
+	}
 
     if (red >= blue && red >= green) {
 	blue  = 0;
