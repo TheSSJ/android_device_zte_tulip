@@ -90,8 +90,12 @@ QCOM_BT_READ_ADDR_FROM_PROP := true
 # Camera
 TARGET_USES_MEDIA_EXTENSIONS := true
 USE_DEVICE_SPECIFIC_CAMERA := true
+BOARD_QTI_CAMERA_32BIT_ONLY := true
 TARGET_USES_NON_TREBLE_CAMERA := true
 TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
+TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
+	/system/vendor/bin/mm-qcamera-daemon=26
+
 # Display
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 SF_VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
@@ -140,6 +144,8 @@ BOARD_NFC_CHIPSET := pn548
 BOARD_NFC_HAL_SUFFIX := msm8952
 
 # Power
+TARGET_POWERHAL_VARIANT := qcom
+TARGET_HAS_NO_WIFI_STATS := true
 TARGET_HAS_NO_WLAN_STATS := true
 TARGET_RPM_SYSTEM_STAT := /d/rpm_stats
 TARGET_HAS_NO_POWER_STATS := true
@@ -159,12 +165,14 @@ TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/rootdir/etc/recovery.fstab
 # Sensors
 USE_SENSOR_MULTI_HAL := true
 
+
 # Shims
 TARGET_LD_SHIM_LIBS := \
     /system/vendor/lib/libizat_core.so|/system/vendor/lib/libshim_gps.so \
     /system/vendor/lib64/libizat_core.so|/system/vendor/lib64/libshim_gps.so \
     /system/vendor/lib64/hw/gxfingerprint.default.so|/system/vendor/lib64/libshim_atomic.so \
     /system/vendor/lib/libFNVfbEngineHAL.so|/system/vendor/lib/libshim_camera.so
+
 
 # TWRP
 ifeq ($(RECOVERY_VARIANT),twrp)
