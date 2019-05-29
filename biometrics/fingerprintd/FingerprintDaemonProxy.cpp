@@ -222,7 +222,7 @@ int64_t FingerprintDaemonProxy::openHal() {
         ALOGE("NOTIFY not set properly: %p != %p", mDevice->notify, hal_notify_callback);
     }
 
-    ALOGE("fingerprint HAL successfully initialized");
+    ALOGI("fingerprint HAL successfully initialized");
     return reinterpret_cast<int64_t>(mDevice); // This is just a handle
 }
 
