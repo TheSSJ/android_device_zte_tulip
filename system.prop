@@ -63,8 +63,6 @@ ro.qualcomm.bluetooth.nap=true
 ro.qualcomm.bluetooth.opp=true
 ro.qualcomm.bluetooth.pbap=true
 
-#XXX ro.bt.bdaddr_path=/sys/module/htc_bdaddress/parameters/bdaddress
-
 # Camera
 camera.hal1.packagelist=com.skype.raider,com.google.android.talk
 camera.lowpower.record.enable=1
@@ -78,7 +76,7 @@ persist.hwc.mdpcomp.enable=true
 persist.hwc.downscale_threshold=1.15
 ro.opengles.version=196609
 ro.sf.lcd_density=480
-ro.sf.disable_triple_buffer=0
+ro.sf.disable_triple_buffer=1
 
 # Factory Reset Protection
 ro.frp.pst=/dev/block/platform/soc.0/7824900.sdhci/by-name/config
