@@ -224,12 +224,12 @@ static void camera_release_recording_frame(struct camera_device *device,
 {
     if (!device)
         return;
-    VideoNativeHandleMetadata* md = (VideoNativeHandleMetadata*) opaque;
-    native_handle_t* nh = md->pHandle;
+//    VideoNativeHandleMetadata* md = (VideoNativeHandleMetadata*) opaque;
+//    native_handle_t* nh = md->pHandle;
 
     VENDOR_CALL(device, release_recording_frame, opaque);
-    native_handle_close(nh);
-    native_handle_delete(nh);
+//    native_handle_close(nh);
+//    native_handle_delete(nh);
 }
 
 static int camera_auto_focus(struct camera_device *device)
@@ -422,6 +422,7 @@ static int camera_device_open(const hw_module_t *module, const char *name,
     int rv = 0;
     int num_cameras = 0;
     int cameraid;
+    int cameraretry = 0;
     wrapper_camera_device_t *camera_device = NULL;
     camera_device_ops_t *camera_ops = NULL;
 
@@ -450,10 +451,15 @@ static int camera_device_open(const hw_module_t *module, const char *name,
         }
         memset(camera_device, 0, sizeof(*camera_device));
         camera_device->id = cameraid;
-
-        rv = gVendorModule->common.methods->open(
-                (const hw_module_t*)gVendorModule, name,
-                (hw_device_t**)&(camera_device->vendor));
+	while (cameraretry < 5) {
+	        rv = gVendorModule->common.methods->open(
+        	        (const hw_module_t*)gVendorModule, name,
+        	        (hw_device_t**)&(camera_device->vendor));
+		if(!rv)
+			break;
+		cameraretry++;
+		sleep(2);
+	}
         if (rv) {
             ALOGE("Failed to open vendor camera");
             goto fail;
