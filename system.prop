@@ -10,7 +10,10 @@ af.fast_track_multiplier=1
 audio.deep_buffer.media=true
 ro.vendor.audio.sdk.ssr=false
 vendor.audio_hal.period_size=192
-
+ro.config.vc_call_vol_steps=6
+ro.config.media_vol_steps=25
+audio.deep_buffer.media=true
+audio.offload.video=true
 vendor.audio.rec.playback.conc.disabled=false
 vendor.voice.playback.conc.disabled=false
 vendor.voice.record.conc.disabled=false
@@ -86,6 +89,10 @@ ro.hardware.fingerprint=goodix
 
 # Media
 persist.media.treble_omx=false
+
+# Memory
+ro.vendor.qti.am.reschedule_service=true
+ro.vendor.qti.sys.fw.bservice_enable=true
 
 # NITZ
 persist.rild.nitz_plmn=
