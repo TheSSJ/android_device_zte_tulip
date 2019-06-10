@@ -179,7 +179,8 @@ PRODUCT_PACKAGES += \
 # HIDL
 PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
-    android.hidl.manager@1.0
+    android.hidl.manager@1.0 \
+    android.hidl.manager@1.0-java
 
 # Init
 PRODUCT_PACKAGES += \
@@ -204,6 +205,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     IPACM_cfg.xml \
     ipacm
+
+# IPv6
+PRODUCT_PACKAGES += \
+    ebtables \
+    ethertypes \
+    libebtc
 
 # IRQ
 PRODUCT_COPY_FILES += \
@@ -237,6 +244,12 @@ PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
+# Netutils
+PRODUCT_PACKAGES += \
+    netutils-wrapper-1.0 \
+    android.system.net.netd@1.0 \
+    libandroid_net
+
 # NFC
 PRODUCT_PACKAGES += \
     com.android.nfc_extras \
@@ -259,7 +272,12 @@ PRODUCT_PACKAGES += \
     libOmxSwVencHevc \
     libOmxVdec \
     libOmxVenc \
-    libstagefrighthw
+    libstagefrighthw \
+    libmm-omxcore \
+    libOmxSwVencMpeg4 \
+    libOmxVdecHevc \
+    libOmxVidcCommon \
+    libstagefright_soft_flacdec
 
 # Power
 PRODUCT_PACKAGES += \
@@ -320,6 +338,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl
 
+# VNDK
+PRODUCT_PACKAGES += \
+    vndk-sp
+
 # Wifi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service \
@@ -346,18 +368,7 @@ PRODUCT_COPY_FILES += \
 
 ##############Debug section#################
 PRODUCT_PACKAGES += \
-    android.hidl.manager@1.0 \
-    android.hidl.base@1.0 \
     libcurl \
+    libxml2 \
+    libnl_2 \
     libjson
-
-PRODUCT_PACKAGES += \
-    ebtables \
-    ethertypes \
-    libebtc
-
-PRODUCT_PACKAGES += \
-    netutils-wrapper-1.0 \
-    android.system.net.netd@1.0 \
-    libandroid_net
-
