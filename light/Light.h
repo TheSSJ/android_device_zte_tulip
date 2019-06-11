@@ -41,6 +41,7 @@ struct Light : public ILight {
     void setNotificationLight(const LightState& state);
     void setSpeakerBatteryLightLocked();
     void setSpeakerLightLocked(const LightState& state);
+    void setButtonsBacklight(const LightState& state);
     std::pair<std::ofstream, uint32_t> mLcdBacklight;
     std::ofstream mRedLed;
     std::ofstream mGreenLed;
@@ -51,6 +52,7 @@ struct Light : public ILight {
     LightState mAttentionState;
     LightState mBatteryState;
     LightState mNotificationState;
+    LightState mButtonsState;
     std::unordered_map<Type, std::function<void(const LightState&)>> mLights;
     std::mutex mLock;
 };

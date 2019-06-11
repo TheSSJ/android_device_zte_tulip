@@ -50,7 +50,9 @@ Light::Light(std::pair<std::ofstream, uint32_t>&& lcd_backlight,
     auto attnFn(std::bind(&Light::setAttentionLight, this, std::placeholders::_1));
     auto backlightFn(std::bind(&Light::setLcdBacklight, this, std::placeholders::_1));
     auto batteryFn(std::bind(&Light::setBatteryLight, this, std::placeholders::_1));
+    auto buttonsFn(std::bind(&Light::setButtonsBacklight, this, std::placeholders::_1));
     auto notifFn(std::bind(&Light::setNotificationLight, this, std::placeholders::_1));
+    mLights.emplace(std::make_pair(Type::BUTTONS, buttonsFn));
     mLights.emplace(std::make_pair(Type::ATTENTION, attnFn));
     mLights.emplace(std::make_pair(Type::BACKLIGHT, backlightFn));
     mLights.emplace(std::make_pair(Type::BATTERY, batteryFn));
@@ -76,14 +78,12 @@ Return<void> Light::getSupportedTypes(getSupportedTypes_cb _hidl_cb) {
 }
 
 void Light::setAttentionLight(const LightState& state) {
-    LOG(VERBOSE) << "Enter setAttentionLight" ;
     std::lock_guard<std::mutex> lock(mLock);
     mAttentionState = state;
     setSpeakerBatteryLightLocked();
 }
 
 void Light::setLcdBacklight(const LightState& state) {
-    LOG(VERBOSE) << "Enter setLcdBacklight" ;
     std::lock_guard<std::mutex> lock(mLock);
     uint32_t brightness = rgbToBrightness(state);
     // If max panel brightness is not the default (255),
@@ -96,15 +96,17 @@ void Light::setLcdBacklight(const LightState& state) {
     mLcdBacklight.first << brightness << std::endl;
 }
 
+void Light::setButtonsBacklight(const LightState& state) {
+    //do nothing
+}
+
 void Light::setBatteryLight(const LightState& state) {
-    LOG(VERBOSE) << "Enter setBatteryLight";
     std::lock_guard<std::mutex> lock(mLock);
     mBatteryState = state;
     setSpeakerBatteryLightLocked();
 }
 
 void Light::setNotificationLight(const LightState& state) {
-    LOG(VERBOSE) << "Enter setNotificationLight";
     std::lock_guard<std::mutex> lock(mLock);
     mNotificationState = state;
     setSpeakerBatteryLightLocked();
