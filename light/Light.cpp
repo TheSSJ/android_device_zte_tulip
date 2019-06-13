@@ -98,6 +98,7 @@ void Light::setLcdBacklight(const LightState& state) {
 
 void Light::setButtonsBacklight(const LightState& state) {
     //do nothing
+    mButtonsState = state;
 }
 
 void Light::setBatteryLight(const LightState& state) {
