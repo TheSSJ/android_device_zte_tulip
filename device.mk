@@ -31,7 +31,7 @@ TARGET_SCREEN_HEIGHT := 1920
 TARGET_SCREEN_WIDTH := 1080
 
 PRODUCT_PROPERTY_OVERRIDES += \
-dalvik.vm.heapstartsize=8m \
+dalvik.vm.heapstartsize=16m \
 dalvik.vm.heapgrowthlimit=288m \
 dalvik.vm.heapsize=768m \
 dalvik.vm.heaptargetutilization=0.75 \
@@ -68,6 +68,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
+
+# Apps
+PRODUCT_PACKAGES += \
+    Gallery2
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -141,6 +145,12 @@ PRODUCT_PACKAGES += \
     gralloc.msm8952 \
     hwcomposer.msm8952 \
     memtrack.msm8952
+
+# DRM
+PRODUCT_PACKAGES += \
+   android.hardware.drm@1.0-impl \
+   android.hardware.drm@1.0-service \
+   android.hardware.drm@1.1-service.clearkey
 
 # Doze
 PRODUCT_PACKAGES += \
@@ -246,9 +256,9 @@ PRODUCT_COPY_FILES += \
 
 # Netutils
 PRODUCT_PACKAGES += \
-    netutils-wrapper-1.0 \
-    android.system.net.netd@1.0 \
-    libandroid_net
+    android.system.net.netd@1.0
+#    netutils-wrapper-1.0 \
+#    libandroid_net
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -362,9 +372,11 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/wifi/WCNSS_cfg.dat:system/vendor/firmware/wlan/prima/WCNSS_cfg.dat \
-    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:system/vendor/etc/wifi/WCNSS_qcom_cfg.ini \
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:system/vendor/firmware/wlan/prima/WCNSS_qcom_cfg.ini \
     $(LOCAL_PATH)/wifi/WCNSS_qcom_wlan_nv.bin:system/vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin \
     $(LOCAL_PATH)/wifi/WCNSS_wlan_dictionary.dat:system/vendor/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
+
+#    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:system/vendor/etc/wifi/WCNSS_qcom_cfg.ini \
 
 ##############Debug section#################
 PRODUCT_PACKAGES += \
