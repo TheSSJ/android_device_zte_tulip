@@ -22,4 +22,13 @@
        3 = right side
   -->
   <integer name="config_fingerprintSensorLocation">0</integer>
+
+ <!-- IDs for each color mode. The values must match the corresponding constants in
+         android.view.Display -->
+    <integer-array name="color_mode_ids">
+        <item>0</item>
+        <item>-1</item>
+        <item>-1</item>
+    </integer-array>
+
 </resources>
