@@ -158,7 +158,7 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.0-service.tulip
+    android.hardware.biometrics.fingerprint@2.1-service.tulip
 
 # Gesture Handler
 PRODUCT_PACKAGES += \
@@ -183,8 +183,8 @@ PRODUCT_COPY_FILES += \
 
 # Health
 PRODUCT_PACKAGES += \
-    android.hardware.health@1.0-impl \
-    android.hardware.health@1.0-service
+    android.hardware.health@2.0-impl \
+    android.hardware.health@2.0-service
 
 # HIDL
 PRODUCT_PACKAGES += \
@@ -212,9 +212,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/synaptics_dsx.kl:system/usr/keylayout/synaptics_dsx.kl
 
 # IPACM
-PRODUCT_PACKAGES += \
-    IPACM_cfg.xml \
-    ipacm
+#PRODUCT_PACKAGES += \
+#    IPACM_cfg.xml \
+#    ipacm
 
 # IPv6
 PRODUCT_PACKAGES += \
@@ -301,7 +301,10 @@ PRODUCT_PACKAGES += \
 
 # Qualcomm dependencies
 PRODUCT_PACKAGES += \
-    libtinyxml
+    libtinyxml \
+    libcurl \
+    libxml2 \
+    libjson
 
 # Recovery
 PRODUCT_PACKAGES += \
@@ -377,10 +380,3 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/wifi/WCNSS_wlan_dictionary.dat:system/vendor/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
 
 #    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:system/vendor/etc/wifi/WCNSS_qcom_cfg.ini \
-
-##############Debug section#################
-PRODUCT_PACKAGES += \
-    libcurl \
-    libxml2 \
-    libnl_2 \
-    libjson
