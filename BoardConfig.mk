@@ -175,7 +175,8 @@ TARGET_LD_SHIM_LIBS := \
     /system/vendor/lib/libizat_core.so|/system/vendor/lib/libshim_gps.so \
     /system/vendor/lib64/libizat_core.so|/system/vendor/lib64/libshim_gps.so \
     /system/vendor/lib64/hw/gxfingerprint.default.so|/system/vendor/lib64/libshim_atomic.so \
-    /system/vendor/lib/libFNVfbEngineHAL.so|/system/vendor/lib/libshim_camera.so
+    /system/vendor/lib/libFNVfbEngineHAL.so|/system/vendor/lib/libshim_camera.so \
+    /vendor/lib64/hw/gxfingerprint.default.so|fakelogprint.so:/vendor/lib64/hw/fingerprint.goodix.so|fakelogprint.so:/vendor/bin/gx_fpd|fakelogprint.so
 
 
 # TWRP
