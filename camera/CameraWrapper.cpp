@@ -451,7 +451,7 @@ static int camera_device_open(const hw_module_t *module, const char *name,
         }
         memset(camera_device, 0, sizeof(*camera_device));
         camera_device->id = cameraid;
-	while (cameraretry < 5) {
+	while (cameraretry < 50) {
 	        rv = gVendorModule->common.methods->open(
         	        (const hw_module_t*)gVendorModule, name,
         	        (hw_device_t**)&(camera_device->vendor));
@@ -464,8 +464,8 @@ static int camera_device_open(const hw_module_t *module, const char *name,
             ALOGE("Failed to open vendor camera");
             goto fail;
         }
-        ALOGV("%s: got vendor camera device 0x%p",
-                __FUNCTION__, camera_device->vendor);
+        ALOGV("%s: got vendor camera device 0x%p on try %d",
+                __FUNCTION__, camera_device->vendor, cameraretry);
 
         camera_ops = (camera_device_ops_t*)malloc(sizeof(*camera_ops));
         if (!camera_ops) {
