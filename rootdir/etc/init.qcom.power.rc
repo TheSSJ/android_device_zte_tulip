@@ -18,7 +18,7 @@ on boot
     write /dev/cpuset/camera-daemon/cpus 4-7
 
 on property:sys.boot_completed=1
-    setprop sys.io.scheduler "bfq"
+    setprop sys.io.scheduler "row"
 
     # HMP scheduler settings
     write /proc/sys/kernel/sched_window_stats_policy 3
