@@ -1,9 +1,9 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := android.hardware.biometrics.fingerprint@2.1-service.tulip
-LOCAL_INIT_RC := android.hardware.biometrics.fingerprint@2.1-service.tulip.rc
-#LOCAL_VENDOR_MODULE := true
+LOCAL_MODULE := android.hardware.biometrics.fingerprint@2.0-service.tulip
+LOCAL_INIT_RC := android.hardware.biometrics.fingerprint@2.0-service.tulip.rc
+LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := \
     BiometricsFingerprint.cpp \
