@@ -76,19 +76,11 @@ persist.camera.stats.test=5
 
 # Display
 persist.hwc.mdpcomp.enable=true
-persist.hwc.downscale_threshold=1.15
 ro.opengles.version=196610
 ro.sf.lcd_density=480
 ro.sf.disable_triple_buffer=1
 debug.hwui.use_buffer_age=false
-debug.egl.hw=0
-debug.enable.sglscale=1
-debug.gralloc.enable_fb_ubwc=1
-debug.mdpcomp.logs=0
-debug.sf.hw=0
-debug.sf.latch_unsignaled=1
-debug.cpurend.vsync=false
-dev.pm.dyn_samplingrate=1
+debug.gr.numframebuffers=2
 
 # Wireless display
 #persist.debug.wfd.enable=1
@@ -105,20 +97,11 @@ persist.media.treble_omx=false
 mmp.enable.3g2=true
 mm.enable.qcom_parser=1048575
 vidc.enc.dcvs.extra-buff-count=2
-av.debug.disable.pers.cache=1
 media.aac_51_output_enabled=true
-media.stagefright.audio.sink=280 \
 mm.enable.smoothstreaming=true
 mm.sec.enable.smoothstreaming=true
 vendor.audio.hw.aac.encoder=true
-vendor.vidc.dec.downscalar_height=1080
-vendor.vidc.dec.downscalar_width=1920
-vendor.vidc.disable.split.mode=1
-vendor.vidc.enc.disable.pq=true
-vendor.vidc.enc.disable_bframes=1
-
-# Optimization
-ro.vendor.qti.sys.fw.bservice_enable=true
+media.mediadrmservice.enable=false
 
 # NITZ
 persist.rild.nitz_plmn=
