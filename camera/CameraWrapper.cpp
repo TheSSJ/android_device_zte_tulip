@@ -21,14 +21,14 @@
 *
 */
 
-//#define LOG_NDEBUG 0
 
 #include <string.h>
 #include <dlfcn.h>
 #include <math.h>
 
 #define LOG_TAG "CameraWrapper"
-#include <cutils/log.h>
+//#include <cutils/log.h>
+#include <utils/Log.h>
 #include <cutils/native_handle.h>
 #include <utils/threads.h>
 #include <utils/String8.h>
@@ -339,11 +339,11 @@ static char *camera_get_parameters(struct camera_device *device)
 
     CameraParameters2 cp;
     cp.unflatten(String8(params));
-
     remove_invalid_sizes(cp, CameraParameters::KEY_SUPPORTED_PREVIEW_SIZES);
     remove_invalid_sizes(cp, CameraParameters::KEY_SUPPORTED_VIDEO_SIZES);
     remove_invalid_sizes(cp, CameraParameters::KEY_SUPPORTED_PICTURE_SIZES);
-
+    cp.dump();
+    ALOGE("***DBG*** flatten: %s", cp.flatten().string());
     return strdup(cp.flatten().string());
 }
 
