@@ -57,6 +57,9 @@ TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/zte/msm8952
 TARGET_KERNEL_CONFIG := lineage_tulip_defconfig
 
+# ANT
+BOARD_ANT_WIRELESS_DEVICE := "qualcomm-smd"
+
 # Audio
 AUDIO_FEATURE_ENABLED_ACDB_LICENSE := true
 AUDIO_FEATURE_ENABLED_ALAC_OFFLOAD := true
@@ -88,13 +91,13 @@ BLUETOOTH_HCI_USE_MCT := true
 QCOM_BT_READ_ADDR_FROM_PROP := true
 
 # Camera
-TARGET_USE_VENDOR_CAMERA_EXT := true
-TARGET_TS_MAKEUP := true
+#TARGET_USE_VENDOR_CAMERA_EXT := true
+#TARGET_TS_MAKEUP := true
 TARGET_USES_MEDIA_EXTENSIONS := true
 USE_DEVICE_SPECIFIC_CAMERA := true
 BOARD_QTI_CAMERA_32BIT_ONLY := true
-TARGET_USES_NON_TREBLE_CAMERA := true
-TARGET_NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true
+#TARGET_USES_NON_TREBLE_CAMERA := true
+#TARGET_NEEDS_LEGACY_CAMERA_HAL1_DYN_NATIVE_HANDLE := true
 TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
 TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
 	/system/vendor/bin/mm-qcamera-daemon=23
@@ -169,6 +172,7 @@ TARGET_LD_SHIM_LIBS := \
     /system/vendor/lib64/libizat_core.so|/system/vendor/lib64/libshim_gps.so \
     /system/vendor/lib64/hw/gxfingerprint.default.so|/system/vendor/lib64/libshim_atomic.so \
     /system/vendor/lib/libFNVfbEngineHAL.so|/system/vendor/lib/libshim_camera.so \
+    /system/vendor/lib/hw/camera.vendor.msm8952.so|/system/vendor/lib/libshim_camera2.so \
     /vendor/lib64/hw/gxfingerprint.default.so|fakelogprint.so:/vendor/lib64/hw/fingerprint.goodix.so|fakelogprint.so:/vendor/bin/gx_fpd|fakelogprint.so
 
 
