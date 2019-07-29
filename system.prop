@@ -71,8 +71,7 @@ camera.hal1.packagelist=com.skype.raider,com.google.android.talk
 camera.lowpower.record.enable=1
 camera.display.umax=1920x1080
 camera.display.lmax=1280x720
-media.camera.ts.monotonic=1
-persist.camera.stats.test=5
+persist.camera.HAL3.enabled=0
 
 # Display
 persist.hwc.mdpcomp.enable=true

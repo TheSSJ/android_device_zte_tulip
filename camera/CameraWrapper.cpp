@@ -20,14 +20,13 @@
 * This file wraps a vendor camera module.
 *
 */
-
+//#define LOG_NDEBUG 0
 
 #include <string.h>
 #include <dlfcn.h>
 #include <math.h>
 
 #define LOG_TAG "CameraWrapper"
-//#include <cutils/log.h>
 #include <utils/Log.h>
 #include <cutils/native_handle.h>
 #include <utils/threads.h>
@@ -36,8 +35,8 @@
 #include <hardware/camera.h>
 #include <camera/Camera.h>
 #include <camera/CameraParameters2.h>
+#include "CameraWrapper.h"
 #include <media/hardware/HardwareAPI.h> // For VideoNativeHandleMetadata
-
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 #define BACK_CAMERA_ID  0
@@ -45,7 +44,7 @@
 
 using namespace android;
 
-static Mutex gCameraWrapperLock;
+//static Mutex gCameraWrapperLock;
 static camera_module_t* gVendorModule;
 
 static camera_notify_callback gUserNotifyCb = NULL;
@@ -342,8 +341,6 @@ static char *camera_get_parameters(struct camera_device *device)
     remove_invalid_sizes(cp, CameraParameters::KEY_SUPPORTED_PREVIEW_SIZES);
     remove_invalid_sizes(cp, CameraParameters::KEY_SUPPORTED_VIDEO_SIZES);
     remove_invalid_sizes(cp, CameraParameters::KEY_SUPPORTED_PICTURE_SIZES);
-    cp.dump();
-    ALOGE("***DBG*** flatten: %s", cp.flatten().string());
     return strdup(cp.flatten().string());
 }
 
@@ -414,7 +411,7 @@ done:
  * so this function will always only be called once per camera instance
  */
 
-static int camera_device_open(const hw_module_t *module, const char *name,
+int camera_device_open(const hw_module_t *module, const char *name,
         hw_device_t **device)
 {
     ALOGV("%s", __FUNCTION__);
@@ -582,7 +579,7 @@ camera_module_t HAL_MODULE_INFO_SYM = {
          .hal_api_version = HARDWARE_HAL_API_VERSION,
          .id = CAMERA_HARDWARE_MODULE_ID,
          .name = "Camera Wrapper",
-         .author = "The CyanogenMod Project",
+         .author = "The LineageOS Project",
          .methods = &camera_module_methods,
          .dso = NULL, /* remove compilation warnings */
          .reserved = {0}, /* remove compilation warnings */
@@ -591,7 +588,7 @@ camera_module_t HAL_MODULE_INFO_SYM = {
     .get_camera_info = camera_get_camera_info,
     .set_callbacks = camera_set_callbacks,
     .get_vendor_tag_ops = get_vendor_tag_ops,
-    .open_legacy = camera_open_legacy,
+    .open_legacy = NULL,
     .set_torch_mode = camera_set_torch_mode,
     .init = NULL,
     .reserved = {0}, /* remove compilation warnings */
