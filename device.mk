@@ -133,7 +133,6 @@ PRODUCT_PACKAGES += \
     camera.device@3.2-impl \
     libshims_qcamera-daemon \
     libshim_camera \
-    libshim_camera2 \
     Snap
 
 PRODUCT_PROPERTY_OVERRIDES += \
