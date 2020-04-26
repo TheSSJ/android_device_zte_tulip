@@ -386,8 +386,6 @@ etc/firmware/venus-v1.mdt:vendor/firmware/venus-v1.mdt
 # NFC
 vendor/firmware/libpn548ad_fw.so
 vendor/firmware/libpn553_fw.so
-vendor/lib64/hw/android.hardware.nfc@1.0-impl
-vendor/lib64/hw/nfc_nci.msm8952.so
 
 # Perf
 bin/msm_irqbalance:vendor/bin/msm_irqbalance
