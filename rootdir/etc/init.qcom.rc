@@ -467,7 +467,7 @@ service ril-daemon2 /vendor/bin/hw/rild -c 2
     socket rild-debug2 stream 660 radio system 
     socket sap_uim_socket2 stream 660 bluetooth bluetooth
     user root
-    group radio cache inet misc audio readproc wakelock net_raw wifi system drmpc sdcard_r sdcard_rw oem_2950 diag log qcom_diag
+    group radio cache inet misc audio readproc wakelock net_raw oem_2950 log
 
 service vendor.ril-daemon /vendor/bin/hw/rild
     class main
@@ -475,7 +475,7 @@ service vendor.ril-daemon /vendor/bin/hw/rild
     socket sap_uim_socket1 stream 660 bluetooth bluetooth
     socket rild-debug stream 660 radio system
     user root
-    group radio cache inet misc audio log readproc wakelock qcom_diag
+    group radio cache inet misc audio log readproc wakelock oem_2950
 
 service vendor.msm_irqbalance /system/vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
     class main
