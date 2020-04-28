@@ -55,3 +55,6 @@
 
 # Goodix Fingerprint data
 /data/system/fingerprint(/.*)?              u:object_r:gx_fpd_data_file:s0
+
+#Firmware
+/firmware(/.*)?				    u:object_r:firmware_file:s0

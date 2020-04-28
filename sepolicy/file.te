@@ -1,4 +1,5 @@
 type gx_fpd_data_file, file_type, data_file_type;
+type firmware_file, file_type;
 
 # debugfs
 type debugfs_ion, debugfs_type, fs_type;
