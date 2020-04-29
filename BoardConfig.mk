@@ -185,9 +185,6 @@ TARGET_RECOVERY_DEVICE_DIRS += $(LOCAL_PATH)/twrp
 TW_INCLUDE_CRYPTO := true
 endif
 
-# RIL
-TARGET_RIL_VARIANT := caf
-
 # SELinux
 include device/qcom/sepolicy-legacy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy
