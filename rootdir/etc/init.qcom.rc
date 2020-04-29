@@ -346,7 +346,8 @@ service vendor.adsprpcd /system/vendor/bin/adsprpcd
 
 service charger /charger
     class charger
-    group graphics system
+    user system
+    group graphics system input
     seclabel u:r:healthd:s0
 
 service vendor.gx_fpd /system/vendor/bin/gx_fpd
