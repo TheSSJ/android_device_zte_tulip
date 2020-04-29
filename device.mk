@@ -270,8 +270,6 @@ PRODUCT_COPY_FILES += \
 # Netutils
 PRODUCT_PACKAGES += \
     android.system.net.netd@1.0
-#    netutils-wrapper-1.0 \
-#    libandroid_net
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -305,7 +303,7 @@ PRODUCT_PACKAGES += \
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.2-service-qti
+    android.hardware.power@1.1-service-qti
 
 # QMI
 PRODUCT_PACKAGES += \
