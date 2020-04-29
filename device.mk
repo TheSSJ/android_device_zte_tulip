@@ -39,8 +39,6 @@ dalvik.vm.heapminfree=512k \
 dalvik.vm.heapmaxfree=8m
 
 $(call inherit-product-if-exists, frameworks/native/build/phone-xxhdpi-3072-hwui-memory.mk)
-# Shipping API level
-$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 
 # Permissions
 PRODUCT_COPY_FILES += \
