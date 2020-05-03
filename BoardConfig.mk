@@ -97,12 +97,14 @@ USE_DEVICE_SPECIFIC_CAMERA := true
 BOARD_QTI_CAMERA_32BIT_ONLY := true
 TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
 TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
-	/system/vendor/bin/mm-qcamera-daemon=23
+	/system/vendor/bin/mm-qcamera-daemon=23 \
+	/system/vendor/bin/hw/rild=27
 
 # CNE
 BOARD_USES_QCNE := true
 
 # Display
+TARGET_SCREEN_DENSITY := 480
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 TARGET_USES_C2D_COMPOSITION := true
 TARGET_USES_ION := true
