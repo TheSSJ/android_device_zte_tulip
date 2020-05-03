@@ -350,11 +350,11 @@ service charger /charger
     capabilities SYS_BOOT
     seclabel u:r:healthd:s0
 
-service vendor.gx_fpd /system/vendor/bin/gx_fpd
-    class late_start
-    user root
-    group system root input
-    onrestart restart fingerprintd
+#service vendor.gx_fpd /system/vendor/bin/gx_fpd
+#    class late_start
+#    user root
+#    group system root input
+#    onrestart restart fingerprintd
 
 on property:wc_transport.start_hci=true
     start vendor.start_hci_filter
@@ -462,21 +462,21 @@ service vendor.irsc_util /system/vendor/bin/irsc_util "/etc/sec_config"
     user root
     oneshot
 
-service ril-daemon2 /vendor/bin/hw/rild -c 2
-    class main
-    socket rild2 stream 660 root radio
-    socket rild-debug2 stream 660 radio system 
-    socket sap_uim_socket2 stream 660 bluetooth bluetooth
-    user root
-    group radio cache inet misc audio readproc wakelock net_raw oem_2950 log
+#service ril-daemon2 /vendor/bin/hw/rild -c 2
+#    class main
+#    socket rild2 stream 660 root radio
+#    socket rild-debug2 stream 660 radio system 
+#    socket sap_uim_socket2 stream 660 bluetooth bluetooth
+#    user root
+#    group radio cache inet misc audio readproc wakelock net_raw oem_2950 log
 
-service vendor.ril-daemon /vendor/bin/hw/rild
-    class main
-    socket rild stream 660 root radio
-    socket sap_uim_socket1 stream 660 bluetooth bluetooth
-    socket rild-debug stream 660 radio system
-    user root
-    group radio cache inet misc audio log readproc wakelock oem_2950
+#service vendor.ril-daemon /vendor/bin/hw/rild
+#    class main
+#    socket rild stream 660 root radio
+#    socket sap_uim_socket1 stream 660 bluetooth bluetooth
+#    socket rild-debug stream 660 radio system
+#    user root
+#    group radio cache inet misc audio log readproc wakelock oem_2950
 
 service vendor.msm_irqbalance /system/vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
     class main
