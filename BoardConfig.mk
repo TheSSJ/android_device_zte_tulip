@@ -54,6 +54,9 @@ TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/zte/msm8952
 TARGET_KERNEL_CONFIG := lineage_tulip_defconfig
 
+# APEX
+TARGET_FLATTEN_APEX := true
+
 # ANT
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-smd"
 
