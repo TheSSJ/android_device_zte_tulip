@@ -1,0 +1,18 @@
+cc_binary {
+    relative_install_path: "hw",
+    defaults: ["hidl_defaults"],
+    name: "android.hardware.thermal@1.1-service.tulip",
+    proprietary: true,
+    init_rc: ["android.hardware.thermal@1.1-service.tulip.rc"],
+    srcs: ["service.cpp", "Thermal.cpp", "thermal-helper.cpp"],
+    shared_libs: [
+        "libbase",
+        "libhardware",
+        "libhidlbase",
+        "libhidltransport",
+        "liblog",
+        "libhwbinder",
+        "libutils",
+        "android.hardware.thermal@1.1",
+    ],
+}
