@@ -134,6 +134,7 @@ net.tcp.buffersize.wifi=524288,2097152,4194304,262144,524288,1048576
 
 # Perf
 ro.vendor.extension_library=libqti-perfd-client.so
+persist.data.qmi.adb_logmask=0
 
 # Radio
 rild.libargs=-d /dev/smd0
