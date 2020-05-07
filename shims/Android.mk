@@ -23,7 +23,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := camera.cpp
-LOCAL_SHARED_LIBRARIES := libui
+LOCAL_SHARED_LIBRARIES := libui libutils
 LOCAL_MODULE := libshim_camera
 LOCAL_MODULE_TAGS := optional
 LOCAL_MULTILIB := 32

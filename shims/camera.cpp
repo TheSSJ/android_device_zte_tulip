@@ -15,7 +15,10 @@
  */
 
 #include <string>
+#include <stdint.h>
 
+// GraphicBuffer::lock(uint32_t inUsage, void** vaddr, int32_t* outBytesPerPixel, int32_t* outBytesPerStride);
+extern "C" void _ZN7android13GraphicBuffer4lockEjPPvPiS3_(uint32_t inUsage, void** vaddr, int32_t* outBytesPerPixel, int32_t* outBytesPerStride);
 // status_t android::GgraphicBuffer::reallocate(uint32_t, uint32_t, PixelFormat, uint32_t, uint64_t);
 extern "C" int _ZN7android13GraphicBuffer10reallocateEjjijy(unsigned int, unsigned int, int, unsigned int, unsigned long long);
 
@@ -37,5 +40,9 @@ extern "C" void _ZN7android13GraphicBufferC1Ejjij(
   std::string requestorName = "<Unknown>";
   _ZN7android13GraphicBufferC1EjjijNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE(
       inWidth, inHeight, inFormat, inUsage, requestorName);
+}
+
+extern "C" void _ZN7android13GraphicBuffer4lockEjPPv(uint32_t inUsage, void** vaddr) {
+	_ZN7android13GraphicBuffer4lockEjPPvPiS3_(inUsage, vaddr, nullptr, nullptr);
 }
 
