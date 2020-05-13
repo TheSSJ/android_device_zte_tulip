@@ -351,11 +351,11 @@ service charger /charger
     capabilities SYS_BOOT
     seclabel u:r:healthd:s0
 
-#service vendor.gx_fpd /system/vendor/bin/gx_fpd
-#    class late_start
-#    user root
-#    group system root input
-#    onrestart restart fingerprintd
+service vendor.gx_fpd /system/vendor/bin/gx_fpd
+    class late_start
+    user root
+    group system root input
+    onrestart restart fingerprintd
 
 on property:wc_transport.start_hci=true
     start vendor.start_hci_filter
