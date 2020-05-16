@@ -20,13 +20,14 @@
 * This file wraps a vendor camera module.
 *
 */
-//#define LOG_NDEBUG 0
+
 
 #include <string.h>
 #include <dlfcn.h>
 #include <math.h>
 
 #define LOG_TAG "CameraWrapper"
+//#include <cutils/log.h>
 #include <utils/Log.h>
 #include <cutils/native_handle.h>
 #include <utils/threads.h>
@@ -35,8 +36,8 @@
 #include <hardware/camera.h>
 #include <camera/Camera.h>
 #include <camera/CameraParameters2.h>
-#include "CameraWrapper.h"
 #include <media/hardware/HardwareAPI.h> // For VideoNativeHandleMetadata
+
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 #define BACK_CAMERA_ID  0
@@ -44,7 +45,7 @@
 
 using namespace android;
 
-//static Mutex gCameraWrapperLock;
+static Mutex gCameraWrapperLock;
 static camera_module_t* gVendorModule;
 
 static camera_notify_callback gUserNotifyCb = NULL;
@@ -411,7 +412,7 @@ done:
  * so this function will always only be called once per camera instance
  */
 
-int camera_device_open(const hw_module_t *module, const char *name,
+static int camera_device_open(const hw_module_t *module, const char *name,
         hw_device_t **device)
 {
     ALOGV("%s", __FUNCTION__);
@@ -588,7 +589,7 @@ camera_module_t HAL_MODULE_INFO_SYM = {
     .get_camera_info = camera_get_camera_info,
     .set_callbacks = camera_set_callbacks,
     .get_vendor_tag_ops = get_vendor_tag_ops,
-    .open_legacy = NULL,
+    .open_legacy = camera_open_legacy,
     .set_torch_mode = camera_set_torch_mode,
     .init = NULL,
     .reserved = {0}, /* remove compilation warnings */
