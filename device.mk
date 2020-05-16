@@ -78,7 +78,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.dsi.ant.antradio_library.xml
 
-
 # Apps
 PRODUCT_PACKAGES += \
     Gallery2
@@ -118,6 +117,10 @@ PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/usb_audio_policy_configuration.xml:system/etc/usb_audio_policy_configuration.xml
+
+# Dolby
+PRODUCT_COPY_FILES +=  \
+    $(LOCAL_PATH)/audio/dax-default.xml:system/etc/dolby/dax-default.xml
 
 # Bluetooth
 PRODUCT_PACKAGES += \
