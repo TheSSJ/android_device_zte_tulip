@@ -66,7 +66,8 @@ typedef struct{
 
     uint8_t auto_hdr_supported;
 
-    uint16_t isWnrSupported;
+    uint8_t isWnrSupported;
+    //volatile char zte1[1];
     /* supported iso modes */
     size_t supported_iso_modes_cnt;
     cam_iso_mode_type supported_iso_modes[CAM_ISO_MODE_MAX];
@@ -74,7 +75,7 @@ typedef struct{
     /* supported flash modes */
     size_t supported_flash_modes_cnt;
     cam_flash_mode_t supported_flash_modes[CAM_FLASH_MODE_MAX];
-
+    volatile char zte2[4];
     size_t zoom_ratio_tbl_cnt;                              /* table size for zoom ratios */
     uint32_t zoom_ratio_tbl[MAX_ZOOMS_CNT];                 /* zoom ratios table */
 
@@ -124,9 +125,10 @@ typedef struct{
     cam_rational_type_t exp_compensation_step;    /* exposure compensation step value */
 
     uint8_t video_stablization_supported; /* flag id video stablization is supported */
-
+    volatile char zte3[3];
     size_t picture_sizes_tbl_cnt;                           /* picture sizes table size */
     cam_dimension_t picture_sizes_tbl[MAX_SIZES_CNT];       /* picture sizes table */
+    volatile char zte4[4];
     /* The minimum frame duration that is supported for each
      * resolution in availableProcessedSizes. Should correspond
      * to the frame duration when only that processed stream
@@ -157,7 +159,6 @@ typedef struct{
 
     size_t hfr_tbl_cnt;                                     /* table size for HFR */
     cam_hfr_info_t hfr_tbl[CAM_HFR_MODE_MAX];               /* HFR table */
-
     /* supported preview formats */
     size_t supported_preview_fmt_cnt;
     cam_format_t supported_preview_fmts[CAM_FORMAT_MAX];
@@ -167,7 +168,7 @@ typedef struct{
     cam_format_t supported_picture_fmts[CAM_FORMAT_MAX];
 
     uint8_t max_downscale_factor;
-
+    volatile char zte6[3];
     /* dimension and supported output format of raw dump from camif */
     size_t supported_raw_dim_cnt;
     cam_dimension_t raw_dim[MAX_SIZES_CNT];
@@ -192,7 +193,7 @@ typedef struct{
 
     uint8_t max_num_roi;                  /* max number of roi can be detected */
     uint8_t max_num_focus_areas;          /* max num of focus areas */
-    uint8_t max_num_metering_areas;       /* max num opf metering areas */
+//    uint8_t max_num_metering_areas;       /* max num opf metering areas */
     uint8_t max_zoom_step;                /* max zoom step value */
 
     /* QCOM specific control */
@@ -210,7 +211,7 @@ typedef struct{
     cam_padding_info_t padding_info;      /* padding information from PP */
     uint32_t min_num_pp_bufs;             /* minimum number of buffers needed by postproc module */
     cam_format_t rdi_mode_stream_fmt;  /* stream format supported in rdi mode */
-
+    volatile char zte7[24];
     /* capabilities specific to HAL 3 */
 
     float min_focus_distance;
@@ -218,7 +219,7 @@ typedef struct{
 
     float focal_lengths[CAM_FOCAL_LENGTHS_MAX];
     uint8_t focal_lengths_count;
-
+    volatile char zte8[3];
     /* Needs to be regular f number instead of APEX */
     float apertures[CAM_APERTURES_MAX];
     uint8_t apertures_count;
@@ -228,15 +229,12 @@ typedef struct{
 
     uint8_t optical_stab_modes[CAM_OPT_STAB_MAX];
     uint8_t optical_stab_modes_count;
-
     cam_dimension_t lens_shading_map_size;
-    float lens_shading_map[3 * CAM_MAX_MAP_WIDTH *
-              CAM_MAX_MAP_HEIGHT];
+    float lens_shading_map[3 * CAM_MAX_MAP_WIDTH * CAM_MAX_MAP_HEIGHT];
 
     cam_dimension_t geo_correction_map_size;
-    float geo_correction_map[2 * 3 * CAM_MAX_MAP_WIDTH *
-              CAM_MAX_MAP_HEIGHT];
-
+//    float geo_correction_map[2 * 3 * CAM_MAX_MAP_WIDTH * CAM_MAX_MAP_HEIGHT];
+    float geo_correction_map[108];
     float lens_position[3];
 
     /* nano seconds */
@@ -247,7 +245,7 @@ typedef struct{
 
     cam_color_filter_arrangement_t color_arrangement;
     uint8_t num_color_channels;
-
+    volatile char zte10[3];
     /* parameters required to calculate S and O co-efficients */
     double gradient_S;
     double offset_S;
@@ -272,7 +270,6 @@ typedef struct{
 
     /* Time taken before flash can fire again in nano secs */
     int64_t flash_charge_duration;
-
     /* flash firing power */
     size_t supported_flash_firing_level_cnt;
     cam_format_t supported_firing_levels[CAM_FLASH_FIRING_LEVEL_MAX];
@@ -285,6 +282,7 @@ typedef struct{
 
     /* Flash max Energy */
     uint8_t flash_max_energy;
+    volatile char zte12[2];
 
     /* Maximum number of supported points in the tonemap
        curve */
@@ -292,12 +290,14 @@ typedef struct{
 
     /* supported formats */
     size_t supported_scalar_format_cnt;
-    cam_format_t supported_scalar_fmts[CAM_FORMAT_MAX];
-
+//    cam_format_t supported_scalar_fmts[CAM_FORMAT_MAX];
+    cam_format_t supported_scalar_fmts[6];
     uint32_t max_face_detection_count;
+    volatile char zte13[384];
     uint8_t hw_analysis_supported;
-
+    volatile char zte14[4];
     uint8_t histogram_supported;
+    volatile char zte15[2];
     /* Number of histogram buckets supported */
     int32_t histogram_size;
     /* Maximum value possible for a histogram bucket */
@@ -320,8 +320,8 @@ typedef struct{
     cam_scene_mode_overrides_t scene_mode_overrides[CAM_SCENE_MODE_MAX];
     size_t scale_picture_sizes_cnt;
     cam_dimension_t scale_picture_sizes[MAX_SCALE_SIZES_CNT];
-
     uint8_t flash_available;
+    volatile char zte17[3];
 
     cam_rational_type_t base_gain_factor;    /* sensor base gain factor */
     /* AF Bracketing info */
@@ -339,9 +339,11 @@ typedef struct{
 
     uint8_t focus_dist_calibrated;
     uint8_t supported_test_pattern_modes_cnt;
+//    volatile char zte19[2];
     cam_test_pattern_mode_t supported_test_pattern_modes[MAX_TEST_PATTERN_CNT];
 
     int64_t stall_durations[MAX_SIZES_CNT];
+  //  volatile char zte20[4];
 
     cam_illuminat_t reference_illuminant1;
     cam_illuminat_t reference_illuminant2;
@@ -355,6 +357,7 @@ typedef struct{
     cam_rational_type_t calibration_transform1[CAL_TRANSFORM_ROWS][CAL_TRANSFORM_COLS];
     cam_rational_type_t calibration_transform2[CAL_TRANSFORM_ROWS][CAL_TRANSFORM_COLS];
     uint16_t isCacSupported;
+    volatile char zte21[2];
 
     cam_opaque_raw_format_t opaque_raw_fmt;
 
@@ -370,6 +373,7 @@ typedef struct{
     /* Can the sensor timestamp be compared to
      * timestamps from other sub-systems (gyro, accelerometer etc.) */
     uint8_t isTimestampCalibrated;
+    volatile char zte22[3];
 
     /* Analysis stream max supported size */
     cam_dimension_t analysis_max_res;
@@ -402,6 +406,8 @@ typedef struct{
     uint32_t buf_alignment;
     uint32_t min_stride;
     uint32_t min_scanline;
+    uint8_t max_num_metering_areas;
+    volatile char zte_magic[2];
 } cam_capability_t;
 
 typedef enum {
@@ -905,6 +911,10 @@ typedef struct {
     INCLUDE(CAM_INTF_PARM_FLIP,                         int32_t,                     1);
     INCLUDE(CAM_INTF_AF_STATE_TRANSITION,               uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_INSTANT_AEC,                  uint8_t,                     1);
+//    INCLUDE(CAM_INTF_PARM_INITIAL_EXPOSURE_INDEX,       uint32_t,                    1);
+//    INCLUDE(ZTE_META_01,				uint32_t,		     1);
+//    INCLUDE(ZTE_META_02,				uint32_t,		     1);
+//    INCLUDE(ZTE_META_03,				uint32_t,		     1);
 } metadata_data_t;
 
 /* Update clear_metadata_buffer() function when a new is_xxx_valid is added to

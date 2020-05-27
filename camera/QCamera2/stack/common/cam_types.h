@@ -1539,8 +1539,8 @@ typedef enum {
     CAM_INTF_PARM_EXPOSURE_COMPENSATION,
     CAM_INTF_PARM_EV_STEP,
     CAM_INTF_PARM_AEC_LOCK,
-    CAM_INTF_PARM_FPS_RANGE,
-    CAM_INTF_PARM_AWB_LOCK, /* 10 */
+    CAM_INTF_PARM_FPS_RANGE, //10
+    CAM_INTF_PARM_AWB_LOCK, /* 11 */
     CAM_INTF_PARM_EFFECT,
     CAM_INTF_PARM_BESTSHOT_MODE,
     CAM_INTF_PARM_DIS_ENABLE,
@@ -1552,8 +1552,8 @@ typedef enum {
 
     /* specific to HAl1 */
     CAM_INTF_META_AUTOFOCUS_DATA,
-    CAM_INTF_PARM_QUERY_FLASH4SNAP,
-    CAM_INTF_PARM_EXPOSURE, /* 20 */
+    CAM_INTF_PARM_QUERY_FLASH4SNAP, //20
+    CAM_INTF_PARM_EXPOSURE, /* 21 */
     CAM_INTF_PARM_SHARPNESS,
     CAM_INTF_PARM_CONTRAST,
     CAM_INTF_PARM_SATURATION,
@@ -1563,7 +1563,7 @@ typedef enum {
     CAM_INTF_PARM_ROLLOFF,
     CAM_INTF_PARM_MODE,             /* camera mode */
     CAM_INTF_PARM_AEC_ALGO_TYPE,    /* auto exposure algorithm */
-    CAM_INTF_PARM_FOCUS_ALGO_TYPE, /* 30 */ /* focus algorithm */
+    CAM_INTF_PARM_FOCUS_ALGO_TYPE, /* 31 */ /* focus algorithm */
     CAM_INTF_PARM_AEC_ROI,
     CAM_INTF_PARM_AF_ROI,
     CAM_INTF_PARM_SCE_FACTOR,
@@ -1573,7 +1573,7 @@ typedef enum {
     CAM_INTF_PARM_REDEYE_REDUCTION,
     CAM_INTF_PARM_WAVELET_DENOISE,
     CAM_INTF_PARM_TEMPORAL_DENOISE,
-    CAM_INTF_PARM_HISTOGRAM, /* 40 */
+    CAM_INTF_PARM_HISTOGRAM, /* 41 */
     CAM_INTF_PARM_ASD_ENABLE,
     CAM_INTF_PARM_RECORDING_HINT,
     CAM_INTF_PARM_HDR,
@@ -1583,7 +1583,7 @@ typedef enum {
     CAM_INTF_PARM_ZSL_MODE,  /* indicating if it's running in ZSL mode */
     CAM_INTF_PARM_BURST_NUM,
     CAM_INTF_PARM_RETRO_BURST_NUM,
-    CAM_INTF_PARM_BURST_LED_ON_PERIOD, /* 50 */
+    CAM_INTF_PARM_BURST_LED_ON_PERIOD, /* 51 */
     CAM_INTF_PARM_HDR_NEED_1X, /* if HDR needs 1x output */
     CAM_INTF_PARM_LOCK_CAF,
     CAM_INTF_PARM_VIDEO_HDR,
@@ -1593,7 +1593,7 @@ typedef enum {
     CAM_INTF_PARM_VT, /* indicating if it's a Video Call Apllication */
     CAM_INTF_META_CROP_DATA,
     CAM_INTF_META_PREP_SNAPSHOT_DONE,
-    CAM_INTF_META_GOOD_FRAME_IDX_RANGE, /* 60 */
+    CAM_INTF_META_GOOD_FRAME_IDX_RANGE, /* 61 */
     CAM_INTF_META_ASD_HDR_SCENE_DATA,
     CAM_INTF_META_ASD_SCENE_TYPE,
     CAM_INTF_META_CURRENT_SCENE,
@@ -1603,7 +1603,7 @@ typedef enum {
     CAM_INTF_META_CHROMATIX_LITE_ISP,
     CAM_INTF_META_CHROMATIX_LITE_PP,
     CAM_INTF_META_CHROMATIX_LITE_AE,
-    CAM_INTF_META_CHROMATIX_LITE_AWB, /* 70 */
+    CAM_INTF_META_CHROMATIX_LITE_AWB, /* 71 */
     CAM_INTF_META_CHROMATIX_LITE_AF,
     CAM_INTF_META_CHROMATIX_LITE_ASD,
     CAM_INTF_META_EXIF_DEBUG_AE,
@@ -1613,7 +1613,7 @@ typedef enum {
     CAM_INTF_META_EXIF_DEBUG_STATS,
     CAM_INTF_PARM_GET_CHROMATIX,
     CAM_INTF_PARM_SET_RELOAD_CHROMATIX,
-    CAM_INTF_PARM_SET_AUTOFOCUSTUNING, /* 80 */
+    CAM_INTF_PARM_SET_AUTOFOCUSTUNING, /* 81 */
     CAM_INTF_PARM_GET_AFTUNE,
     CAM_INTF_PARM_SET_RELOAD_AFTUNE,
     CAM_INTF_PARM_SET_VFE_COMMAND,
@@ -1623,12 +1623,12 @@ typedef enum {
     CAM_INTF_PARM_RDI_MODE,
     CAM_INTF_PARM_CDS_MODE,
     CAM_INTF_PARM_TONE_MAP_MODE,
-    CAM_INTF_PARM_CAPTURE_FRAME_CONFIG,
+    CAM_INTF_PARM_CAPTURE_FRAME_CONFIG, //91
     CAM_INTF_PARM_DUAL_LED_CALIBRATION,
 
     /* stream based parameters */
     CAM_INTF_PARM_DO_REPROCESS,
-    CAM_INTF_PARM_SET_BUNDLE, /* 90 */
+    CAM_INTF_PARM_SET_BUNDLE, /* 94 */
     CAM_INTF_PARM_STREAM_FLIP,
     CAM_INTF_PARM_GET_OUTPUT_CROP,
 
@@ -1639,7 +1639,7 @@ typedef enum {
     /* Whether the metadata maps to a valid frame number */
     CAM_INTF_META_FRAME_NUMBER_VALID,
     /* Whether the urgent metadata maps to a valid frame number */
-    CAM_INTF_META_URGENT_FRAME_NUMBER_VALID,
+    CAM_INTF_META_URGENT_FRAME_NUMBER_VALID, //100
     /* Whether the stream buffer corresponding this frame is dropped or not */
     CAM_INTF_META_FRAME_DROPPED,
     /* COLOR CORRECTION.*/
@@ -1648,7 +1648,7 @@ typedef enum {
      * color space from the scene illuminant to the sRGB-standard D65-illuminant. */
     CAM_INTF_META_COLOR_CORRECT_TRANSFORM,
     /*Color channel gains in the Bayer raw domain in the order [RGeGoB]*/
-    CAM_INTF_META_COLOR_CORRECT_GAINS, /* 100 */
+    CAM_INTF_META_COLOR_CORRECT_GAINS, /* 104 */
     /*The best fit color transform matrix calculated by the stats*/
     CAM_INTF_META_PRED_COLOR_CORRECT_TRANSFORM,
     /*The best fit color channels gains calculated by the stats*/
@@ -1663,7 +1663,7 @@ typedef enum {
     /*Number of streams and size of streams in current configuration*/
     CAM_INTF_META_STREAM_INFO,
     /* List of areas to use for metering */
-    CAM_INTF_META_AEC_ROI,
+    CAM_INTF_META_AEC_ROI, //110
     /* Whether the HAL must trigger precapture metering.*/
     CAM_INTF_META_AEC_PRECAPTURE_TRIGGER,
     /* The ID sent with the latest CAMERA2_TRIGGER_PRECAPTURE_METERING call */
@@ -1672,7 +1672,7 @@ typedef enum {
     /* List of areas to use for focus estimation */
     CAM_INTF_META_AF_ROI,
     /* Whether the HAL must trigger autofocus. */
-    CAM_INTF_META_AF_TRIGGER, /* 110 */
+    CAM_INTF_META_AF_TRIGGER, /* 114 */
     /* Current state of AF algorithm */
     CAM_INTF_META_AF_STATE,
     /* List of areas to use for illuminant estimation */
@@ -1686,7 +1686,7 @@ typedef enum {
     CAM_INTF_META_CAPTURE_INTENT,
     /* DEMOSAIC */
     /* Controls the quality of the demosaicing processing */
-    CAM_INTF_META_DEMOSAIC,
+    CAM_INTF_META_DEMOSAIC, //120
     /* EDGE */
     /* Operation mode for edge enhancement */
     CAM_INTF_META_EDGE_MODE,
@@ -1697,7 +1697,7 @@ typedef enum {
     /* Power for flash firing/torch, 10 is max power; 0 is no flash. Linear */
     CAM_INTF_META_FLASH_POWER,
     /* Firing time of flash relative to start of exposure, in nanoseconds*/
-    CAM_INTF_META_FLASH_FIRING_TIME, /* 120 */
+    CAM_INTF_META_FLASH_FIRING_TIME, /* 124 */
     /* Current state of the flash unit */
     CAM_INTF_META_FLASH_STATE,
     /* GEOMETRIC */
@@ -1712,7 +1712,7 @@ typedef enum {
     /* Size of the lens aperture */
     CAM_INTF_META_LENS_APERTURE,
     /* State of lens neutral density filter(s) */
-    CAM_INTF_META_LENS_FILTERDENSITY,
+    CAM_INTF_META_LENS_FILTERDENSITY, //130
     /* Lens optical zoom setting */
     CAM_INTF_META_LENS_FOCAL_LENGTH,
     /* Distance to plane of sharpest focus, measured from frontmost surface
@@ -1721,7 +1721,7 @@ typedef enum {
     /* The range of scene distances that are in sharp focus (depth of field) */
     CAM_INTF_META_LENS_FOCUS_RANGE,
     /*Whether the hal needs to output the lens shading map*/
-    CAM_INTF_META_LENS_SHADING_MAP_MODE, /* 130 */
+    CAM_INTF_META_LENS_SHADING_MAP_MODE, /* 134 */
     /* Current lens status */
     CAM_INTF_META_LENS_STATE,
     /* NOISE REDUCTION */
@@ -1738,7 +1738,7 @@ typedef enum {
     CAM_INTF_META_SCENE_FLICKER,
     /* SENSOR */
     /* Duration each pixel is exposed to light, in nanoseconds */
-    CAM_INTF_META_SENSOR_EXPOSURE_TIME,
+    CAM_INTF_META_SENSOR_EXPOSURE_TIME, //140
     /* Duration from start of frame exposure to start of next frame exposure,
      * in nanoseconds */
     CAM_INTF_META_SENSOR_FRAME_DURATION,
@@ -1749,7 +1749,7 @@ typedef enum {
     CAM_INTF_META_SENSOR_TIMESTAMP,
     /* Duration b/w start of first row exposure and the start of last
        row exposure in nanoseconds */
-    CAM_INTF_META_SENSOR_ROLLING_SHUTTER_SKEW, /* 140 */
+    CAM_INTF_META_SENSOR_ROLLING_SHUTTER_SKEW, /* 144 */
     /* SHADING */
     /* Quality of lens shading correction applied to the image data */
     CAM_INTF_META_SHADING_MODE,
@@ -1767,7 +1767,7 @@ typedef enum {
      * If only a monochrome sharpness map is supported, all channels
      * should have the same data
      */
-    CAM_INTF_META_STATS_SHARPNESS_MAP,
+    CAM_INTF_META_STATS_SHARPNESS_MAP, //150
 
     /* TONEMAP */
     /* Tone map mode */
@@ -1778,18 +1778,18 @@ typedef enum {
     CAM_INTF_META_FLASH_MODE,
     /* 2D array of gain factors for each color channel that was used to
      * compensate for lens shading for this frame */
-    CAM_INTF_META_LENS_SHADING_MAP, /* 150 */
+    CAM_INTF_META_LENS_SHADING_MAP, /* 154 */
     CAM_INTF_META_PRIVATE_DATA,
     CAM_INTF_PARM_STATS_DEBUG_MASK,
     CAM_INTF_PARM_STATS_AF_PAAF,
     /* Indicates streams ID of all the requested buffers */
     CAM_INTF_META_STREAM_ID,
     CAM_INTF_PARM_FOCUS_BRACKETING,
-    CAM_INTF_PARM_FLASH_BRACKETING,
+    CAM_INTF_PARM_FLASH_BRACKETING, //160
     CAM_INTF_PARM_GET_IMG_PROP,
     CAM_INTF_META_JPEG_GPS_COORDINATES,
     CAM_INTF_META_JPEG_GPS_PROC_METHODS,
-    CAM_INTF_META_JPEG_GPS_TIMESTAMP, /* 160 */
+    CAM_INTF_META_JPEG_GPS_TIMESTAMP, /* 164 */
     CAM_INTF_META_JPEG_ORIENTATION,
     CAM_INTF_META_JPEG_QUALITY,
     CAM_INTF_META_JPEG_THUMB_QUALITY,
@@ -1797,13 +1797,13 @@ typedef enum {
 
     CAM_INTF_META_TEST_PATTERN_DATA,
     /* DNG file support */
-    CAM_INTF_META_PROFILE_TONE_CURVE,
+    CAM_INTF_META_PROFILE_TONE_CURVE, //170
     CAM_INTF_META_NEUTRAL_COL_POINT,
 
     /* CAC */
     CAM_INTF_META_CAC_INFO,
     CAM_INTF_PARM_CAC,
-    CAM_INTF_META_IMG_HYST_INFO, /* 170 */
+    CAM_INTF_META_IMG_HYST_INFO, /* 174 */
 
     /* trigger for all modules to read the debug/log level properties */
     CAM_INTF_PARM_UPDATE_DEBUG_LEVEL,
@@ -1817,7 +1817,7 @@ typedef enum {
     /* Manual exposure time */
     CAM_INTF_PARM_EXPOSURE_TIME,
     /* AWB meta data info */
-    CAM_INTF_META_AWB_INFO,
+    CAM_INTF_META_AWB_INFO, //180
     /* Manual lens position info */
     CAM_INTF_PARM_MANUAL_FOCUS_POS,
     /* Manual White balance gains */
@@ -1825,7 +1825,7 @@ typedef enum {
     /* Offline Data Overwrite */
     CAM_INTF_PARM_HW_DATA_OVERWRITE,
     /* IMG LIB reprocess debug section */
-    CAM_INTF_META_IMGLIB, /* cam_intf_meta_imglib_t */ /* 180 */
+    CAM_INTF_META_IMGLIB, /* cam_intf_meta_imglib_t */ /* 184 */
     /* OEM specific parameters */
     CAM_INTF_PARM_CUSTOM,
     /* parameters added for related cameras */
@@ -1838,7 +1838,7 @@ typedef enum {
     /* crop for trimming edge pixels */
     CAM_INTF_META_SNAP_CROP_INFO_CAMIF,
     /* crop for FOV adjust and zoom */
-    CAM_INTF_META_SNAP_CROP_INFO_ISP,
+    CAM_INTF_META_SNAP_CROP_INFO_ISP, //190
     /* crop for image-stabilization and zoom */
     CAM_INTF_META_SNAP_CROP_INFO_CPP,
     /* parameter for enabling DCRF */
@@ -1848,12 +1848,19 @@ typedef enum {
     /* FLIP mode parameter*/
     CAM_INTF_PARM_FLIP,
     /*Frame divert info from ISP*/
-    CAM_INTF_BUF_DIVERT_INFO, /* 190 */
+    CAM_INTF_BUF_DIVERT_INFO, /* 195 */
     /*AF state change detected by AF module*/
-    CAM_INTF_AF_STATE_TRANSITION, /* 191 */
+    CAM_INTF_AF_STATE_TRANSITION, /* 196 */
     /* Param for enabling instant aec*/
     CAM_INTF_PARM_INSTANT_AEC,
-    CAM_INTF_PARM_MAX /* 192 */
+//    ZTE_META_01,
+//    ZTE_META_02,
+//    ZTE_META_03,
+//    ZTE_META_04, //taken from function QCameraParameter::commitSetBatch, check the loop instruction to see 
+//ADDS            R3, #1
+//CMP             R3, #0xNN => CAM_INTF_PARM_MAX
+//BNE             XXXX
+    CAM_INTF_PARM_MAX /* 198 -> 202 */
 } cam_intf_parm_type_t;
 
 typedef struct {

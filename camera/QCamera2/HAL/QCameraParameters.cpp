@@ -3387,7 +3387,7 @@ int32_t QCameraParameters::setMeteringAreas(const QCameraParameters& params)
 {
     const char *str = params.get(KEY_METERING_AREAS);
     if (str != NULL) {
-        int max_num_mtr_areas = getInt(KEY_MAX_NUM_METERING_AREAS);
+        int max_num_mtr_areas = 5; //getInt(KEY_MAX_NUM_METERING_AREAS);
         if(max_num_mtr_areas == 0) {
             ALOGE("%s: max num of metering areas is 0, cannot set focus areas", __func__);
             return BAD_VALUE;
@@ -5127,6 +5127,7 @@ int32_t QCameraParameters::initDefaultParameters()
     }
 
     // Set metering areas
+    m_pCapability->max_num_metering_areas = 5; //hardcode
     if (m_pCapability->max_num_metering_areas > MAX_ROI) {
         m_pCapability->max_num_metering_areas = MAX_ROI;
     }
@@ -8154,6 +8155,7 @@ int32_t QCameraParameters::setFocusAreas(const char *focusAreasStr)
  *==========================================================================*/
 int32_t QCameraParameters::setMeteringAreas(const char *meteringAreasStr)
 {
+    m_pCapability->max_num_metering_areas = 5; //hardcode
     if (m_pCapability->max_num_metering_areas == 0 ||
         meteringAreasStr == NULL) {
         CDBG("%s: Parameter string is null", __func__);
