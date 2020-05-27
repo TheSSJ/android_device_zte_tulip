@@ -36,6 +36,8 @@
 #include <camera/CameraMetadata.h>
 #include <stdio.h>
 #include <stdlib.h>
+//#include <string>
+//#include <fstream>
 #include <fcntl.h>
 #include <stdint.h>
 #include <utils/Log.h>
@@ -4920,7 +4922,14 @@ int QCamera3HardwareInterface::initCapabilities(uint32_t cameraId)
     int rc = 0;
     mm_camera_vtbl_t *cameraHandle = NULL;
     QCamera3HeapMemory *capabilityHeap = NULL;
+    /*std::string fname = "";
+    if (cameraId == 0)
+	fname = "/data/tmp/mem0.bin";
+    else
+	fname = "/data/tmp/mem1.bin";
 
+    std::ofstream b_stream(fname,std::fstream::out | std::fstream::binary);
+    */
     rc = camera_open((uint8_t)cameraId, &cameraHandle);
     if (rc) {
         ALOGE("%s: camera_open failed. rc = %d", __func__, rc);
@@ -4968,6 +4977,12 @@ int QCamera3HardwareInterface::initCapabilities(uint32_t cameraId)
     memcpy(gCamCapability[cameraId], DATA_PTR(capabilityHeap,0),
                                         sizeof(cam_capability_t));
     rc = 0;
+
+/*  if (b_stream)
+    b_stream.write(reinterpret_cast<char const *>(DATA_PTR(capabilityHeap,0)), sizeof(cam_capability_t));
+  else
+    ALOGE("%s: couldn't write data to file", __func__);
+*/
 
 query_failed:
     cameraHandle->ops->unmap_buf(cameraHandle->camera_handle,
