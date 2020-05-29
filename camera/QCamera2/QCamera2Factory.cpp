@@ -528,61 +528,24 @@ int QCamera2Factory::openLegacy(
  *              none-zero failure code
  *==========================================================================*/
 
-#define SYSFS_FLASH_PATH_BRIGHTNESS "/sys/class/leds/led:torch_0/brightness"
-#define SYSFS_FLASH_PATH_ENABLE "/sys/class/leds/led:switch/brightness"
+//#define SYSFS_FLASH_PATH_BRIGHTNESS "/sys/class/leds/led:torch_0/brightness"
+#define SYSFS_FLASH_PATH_ENABLE "cat /sys/my_flash/open_torch"
+#define SYSFS_FLASH_PATH_DISABLE "cat /sys/my_flash/flash_off"
 
 int QCamera2Factory::setTorchMode(__attribute__((unused)) const char* camera_id, bool on)
 {
     int retVal(0);
-    int fd_brightness(-1);
-    int fd_enable(-1);
-    char buffer[16];
-
-    ALOGD("%s", __func__);
-
-    fd_brightness = open(SYSFS_FLASH_PATH_BRIGHTNESS, O_RDWR);
-    if (fd_brightness < 0) {
-        ALOGE("%s: failed to open '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_BRIGHTNESS);
-        return -EBADF;
-    }
-
-    fd_enable = open(SYSFS_FLASH_PATH_ENABLE, O_RDWR);
-    if (fd_enable < 0) {
-        ALOGE("%s: failed to open '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_ENABLE);
-        return -EBADF;
-    }
 
     if (on) {
         ALOGD("%s: on\n", __FUNCTION__);
-        int bytes = snprintf(buffer, sizeof(buffer), "255");
-        retVal = write(fd_brightness, buffer, (size_t)bytes);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_BRIGHTNESS);
-            return -EBADFD;
-        }
-
-        retVal = write(fd_enable, "1", 1);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_ENABLE);
-            return -EBADFD;
-        }
-    } else {
-        ALOGD("%s: off\n", __FUNCTION__);
-        int bytes = snprintf(buffer, sizeof(buffer), "0");
-        retVal = write(fd_brightness, buffer, (size_t)bytes);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_BRIGHTNESS);
-            return -EBADFD;
-        }
-
-        retVal = write(fd_enable, "0", 1);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_ENABLE);
-            return -EBADFD;
-        }
+	system(SYSFS_FLASH_PATH_ENABLE);
     }
-    close(fd_brightness);
-    close(fd_enable);
+
+
+    else {
+        ALOGD("%s: off\n", __FUNCTION__);
+        system(SYSFS_FLASH_PATH_DISABLE);
+   }
     retVal = 0;
 
     return retVal;
