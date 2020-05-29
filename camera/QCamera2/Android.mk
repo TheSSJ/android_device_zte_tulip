@@ -35,8 +35,8 @@ LOCAL_SRC_FILES += \
         HAL/QCameraPostProc.cpp \
         HAL/QCamera2HWICallbacks.cpp \
         HAL/QCameraParameters.cpp \
-	HAL/CameraParameters.cpp \
-        HAL/QCameraThermalAdapter.cpp
+        HAL/CameraParameters.cpp \
+	HAL/QCameraThermalAdapter.cpp
 
 LOCAL_CFLAGS := -Wall -Wextra -Werror
 LOCAL_CFLAGS += -DHAS_MULTIMEDIA_HINTS
@@ -57,17 +57,17 @@ LOCAL_C_INCLUDES := \
         frameworks/native/libs/arect/include \
         frameworks/native/libs/nativebase/include \
         hardware/qcom-caf/msm8952/media/libstagefrighthw \
+        hardware/qcom-caf/msm8952/display/libqservice \
         system/media/camera/include \
         $(LOCAL_PATH)/../mm-image-codec/qexif \
         $(LOCAL_PATH)/../mm-image-codec/qomx_core \
         $(LOCAL_PATH)/util \
-	hardware/qcom-caf/msm8952/display/libqservice \
         hardware/qcom-caf/msm8952/media/mm-core/inc
 
 #HAL 1.0 Include paths
 LOCAL_C_INCLUDES += \
         frameworks/native/include/media/hardware \
-        device/leeco/s2/camera/QCamera2/HAL
+        $(LOCAL_PATH)/HAL
 
 LOCAL_HEADER_LIBRARIES := generated_kernel_headers
 
@@ -92,7 +92,7 @@ LOCAL_C_INCLUDES += \
         $(TARGET_OUT_HEADERS)/qcom/display
 LOCAL_C_INCLUDES += \
         hardware/qcom/display-caf/msm8952/libqservice
-LOCAL_SHARED_LIBRARIES := liblog libhardware libutils libcutils libdl #libcamera_client
+LOCAL_SHARED_LIBRARIES := liblog libhardware libutils libcutils libdl
 LOCAL_SHARED_LIBRARIES += libmmcamera_interface libmmjpeg_interface libui libcamera_metadata
 LOCAL_SHARED_LIBRARIES += libqdMetaData libqservice libbinder
 ifeq ($(TARGET_TS_MAKEUP),true)
