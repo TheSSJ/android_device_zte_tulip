@@ -319,8 +319,8 @@ int32_t QCameraPostProcessor::stop()
             pChannel->stop();
             delete pChannel;
             pChannel = NULL;
-            m_parent->mParameters.setCurPPCount((int8_t)
-                    (m_parent->mParameters.getCurPPCount() - 1));
+            m_parent->mParameters.setCurPPCount((int8_t)(m_parent->mParameters.getCurPPCount() - 1));
+	    mPPChannels[i] = NULL;
         }
     }
     mTotalNumReproc = 0;

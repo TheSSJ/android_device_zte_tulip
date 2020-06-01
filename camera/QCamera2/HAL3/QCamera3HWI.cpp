@@ -327,7 +327,8 @@ QCamera3HardwareInterface::QCamera3HardwareInterface(uint32_t cameraId,
       mUpdateDebugLevel(false),
       mCallbacks(callbacks),
       mCaptureIntent(0),
-      mCacMode(0)
+      mCacMode(0),
+      mLastFocusDistance(0.0)
 {
     getLogLevel();
     mCameraDevice.common.tag = HARDWARE_DEVICE_TAG;
@@ -1186,8 +1187,8 @@ int QCamera3HardwareInterface::configureStreams(
         return -EINVAL;
     }
     /* Check whether we have zsl stream or 4k video case */
-    if (isZsl && m_bIsVideo) {
-        ALOGE("%s: Currently invalid configuration ZSL&Video!", __func__);
+    if (isZsl && m_bIs4KVideo) {
+        ALOGE("%s: Currently invalid configuration ZSL & 4K Video!", __func__);
         pthread_mutex_unlock(&mMutex);
         return -EINVAL;
     }
@@ -1844,6 +1845,7 @@ int64_t QCamera3HardwareInterface::getMinFrameDuration(const camera3_capture_req
 {
     bool hasJpegStream = false;
     bool hasRawStream = false;
+    int64_t mMinFrameDuration = mMinProcessedFrameDuration;
     for (uint32_t i = 0; i < request->num_output_buffers; i ++) {
         const camera3_stream_t *stream = request->output_buffers[i].stream;
         if (stream->format == HAL_PIXEL_FORMAT_BLOB)
@@ -1853,11 +1855,11 @@ int64_t QCamera3HardwareInterface::getMinFrameDuration(const camera3_capture_req
                 stream->format == HAL_PIXEL_FORMAT_RAW16)
             hasRawStream = true;
     }
-
-    if (!hasJpegStream)
-        return MAX(mMinRawFrameDuration, mMinProcessedFrameDuration);
-    else
-        return MAX(MAX(mMinRawFrameDuration, mMinProcessedFrameDuration), mMinJpegFrameDuration);
+    if (hasRawStream)
+        mMinFrameDuration = MAX(mMinRawFrameDuration, mMinFrameDuration);
+    if (hasJpegStream)
+        mMinFrameDuration = MAX(mMinJpegFrameDuration, mMinFrameDuration);
+    return mMinFrameDuration;
 }
 
 /*===========================================================================
@@ -4433,6 +4435,10 @@ QCamera3HardwareInterface::translateCbUrgentMetadataToResultMetadata
 
     IF_META_AVAILABLE(float, focusDistance, CAM_INTF_META_LENS_FOCUS_DISTANCE, metadata) {
         camMetadata.update(ANDROID_LENS_FOCUS_DISTANCE , focusDistance, 1);
+    } else {
+	ALOGE("Missing LENS_FOCUS_DISTANCE metadata. Use last known distance of %f", mLastFocusDistance);
+	camMetadata.update(ANDROID_LENS_FOCUS_DISTANCE , &mLastFocusDistance, 1);
+
     }
 
     IF_META_AVAILABLE(float, focusRange, CAM_INTF_META_LENS_FOCUS_RANGE, metadata) {
@@ -8143,10 +8149,12 @@ int32_t QCamera3HardwareInterface::extractSceneMode(
             hfrMode)) {
         rc = BAD_VALUE;
     }
+/*
     if (ADD_SET_PARAM_ENTRY_TO_BATCH(hal_metadata, CAM_INTF_PARM_BESTSHOT_MODE,
             sceneMode)) {
         rc = BAD_VALUE;
     }
+*/
     CDBG("%s: sceneMode: %d hfrMode: %d", __func__, sceneMode, hfrMode);
 
     return rc;

@@ -491,6 +491,7 @@ void *QCamera3Stream::dataProcRoutine(void *data)
                     } else {
                         // no data cb routine, return buf here
                         pme->bufDone(frame->bufs[0]->buf_idx);
+			free(frame);
                     }
                 }
             }
@@ -643,8 +644,8 @@ int32_t QCamera3Stream::getBufs(cam_frame_len_offset_t *offset,
 
     mFrameLenOffset = *offset;
     mMemOps = ops_tbl;
-
     mStreamBufs = mChannel->getStreamBufs(mFrameLenOffset.frame_len);
+
     if (!mStreamBufs) {
         ALOGE("%s: Failed to allocate stream buffers", __func__);
         return NO_MEMORY;
