@@ -203,15 +203,18 @@ typedef struct{
     cam_control_range_t saturation_ctrl;  /* saturation */
     cam_control_range_t sce_ctrl;         /* skintone enhancement factor */
 
-    /* QCOM HDR specific control. Indicates number of frames and exposure needs for the frames */
+    volatile char zte7[4];
+/* QCOM HDR specific control. Indicates number of frames and exposure needs for the frames */
     cam_hdr_bracketing_info_t hdr_bracketing_setting;
 
     uint32_t qcom_supported_feature_mask; /* mask of qcom specific features supported:
                                            * such as CAM_QCOM_FEATURE_SUPPORTED_FACE_DETECTION*/
+    volatile char zte7a[12];
     cam_padding_info_t padding_info;      /* padding information from PP */
+    volatile char zte7b[8];
     uint32_t min_num_pp_bufs;             /* minimum number of buffers needed by postproc module */
     cam_format_t rdi_mode_stream_fmt;  /* stream format supported in rdi mode */
-    volatile char zte7[24];
+    //volatile char zte7[24];
     /* capabilities specific to HAL 3 */
 
     float min_focus_distance;
@@ -611,6 +614,7 @@ typedef struct {
 
     /* if frames will not be received */
     uint8_t noFrameExpected;
+    volatile char zte[4];
 } cam_stream_info_t;
 
 /*****************************************************************************
