@@ -1641,10 +1641,6 @@ int32_t QCameraStateMachine::procEvtPreviewingState(qcamera_sm_evt_enum_t evt,
         QCameraVideoMemory::closeNativeHandle((const void *)payload);
     }
         [[fallthrough]];
-    case QCAMERA_SM_EVT_CANCEL_PICTURE:
-        [[fallthrough]];
-    case QCAMERA_SM_EVT_STOP_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -1655,6 +1651,16 @@ int32_t QCameraStateMachine::procEvtPreviewingState(qcamera_sm_evt_enum_t evt,
             m_parent->signalAPIResult(&result);
         }
         break;
+    case QCAMERA_SM_EVT_CANCEL_PICTURE:
+        [[fallthrough]];
+    case QCAMERA_SM_EVT_STOP_RECORDING:
+        {
+	result.status = NO_ERROR;
+	result.request_api = evt;
+	result.result_type = QCAMERA_API_RESULT_TYPE_DEF;
+	 m_parent->signalAPIResult(&result);
+	}
+	[[fallthrough]];
     case QCAMERA_SM_EVT_EVT_INTERNAL:
         {
             qcamera_sm_internal_evt_payload_t *internal_evt =

@@ -41,7 +41,7 @@
 #include <utils/RefBase.h>
 #include "QServiceUtils.h"
 #include <dlfcn.h>
-
+#include "QCameraParameters.h"
 #include "QCamera2HWI.h"
 #include "QCameraBufferMaps.h"
 #include "QCameraMem.h"
@@ -1696,6 +1696,7 @@ QCamera2HardwareInterface::~QCamera2HardwareInterface()
     mDeferredWorkThread.exit();
 
     if (mMetadataMem != NULL) {
+	mMetadataMem->deallocate();
         delete mMetadataMem;
         mMetadataMem = NULL;
     }
@@ -2401,12 +2402,12 @@ uint8_t QCamera2HardwareInterface::getBufNumRequired(cam_stream_type_t stream_ty
                         !mLongshotEnabled) {
                     // Single ZSL snapshot case
                     bufferCnt = zslQBuffers + CAMERA_MIN_STREAMING_BUFFERS +
-                            mParameters.getNumOfExtraBuffersForImageProc();
+                            mParameters.getNumOfExtraBuffersForImageProc() + mParameters.getNumOfExtraHDRInBufsIfNeeded();
                 }
                 else {
                     // ZSL Burst or Longshot case
                     bufferCnt = zslQBuffers + minCircularBufNum +
-                            mParameters.getNumOfExtraBuffersForImageProc();
+                            mParameters.getNumOfExtraBuffersForImageProc() + mParameters.getNumOfExtraHDRInBufsIfNeeded();
                 }
                 if (getSensorType() == CAM_SENSOR_YUV && bufferCnt > CAMERA_ISP_PING_PONG_BUFFERS) {
                     //ISP allocates native buffers in YUV case
@@ -2479,7 +2480,11 @@ uint8_t QCamera2HardwareInterface::getBufNumRequired(cam_stream_type_t stream_ty
             if (is4k2kResolution(&dim)) {
                  //get additional buffer count
                  property_get("vidc.enc.dcvs.extra-buff-count", value, "0");
-                 bufferCnt += atoi(value);
+		 persist_cnt = atoi(value);
+                 if (persist_cnt >= 0 &&
+                     persist_cnt < CAM_MAX_NUM_BUFS_PER_STREAM) {
+                     bufferCnt += persist_cnt;
+                 }
             }
             ALOGI("Buffer count is %d, width / height (%d/%d) ", bufferCnt, dim.width, dim.height);
         }
@@ -2534,7 +2539,7 @@ uint8_t QCamera2HardwareInterface::getBufNumRequired(cam_stream_type_t stream_ty
     }
 
     CDBG("%s: Buffer count = %d for stream type = %d",__func__, bufferCnt, stream_type);
-    if (CAM_MAX_NUM_BUFS_PER_STREAM < bufferCnt) {
+    if (bufferCnt < 0 || CAM_MAX_NUM_BUFS_PER_STREAM < bufferCnt) {
         ALOGE("%s: Buffer count %d for stream type %d exceeds limit %d",
                 __func__, bufferCnt, stream_type, CAM_MAX_NUM_BUFS_PER_STREAM);
         return CAM_MAX_NUM_BUFS_PER_STREAM;
@@ -2679,8 +2684,7 @@ QCameraMemory *QCamera2HardwareInterface::allocateStreamBuf(
     case CAM_STREAM_TYPE_VIDEO:
         {
             //Use uncached allocation by default
-            if (mParameters.isVideoBuffersCached() || mParameters.isSeeMoreEnabled() ||
-                    mParameters.isHighQualityNoiseReductionMode()) {
+            if (mParameters.isVideoBuffersCached() || mParameters.isSeeMoreEnabled()) {
                 bCachedMem = QCAMERA_ION_USE_CACHE;
             }
             else {
@@ -6458,9 +6462,8 @@ int32_t QCamera2HardwareInterface::addPreviewChannel()
     }
 
     if (((mParameters.getDcrf() == true)
-            || (mParameters.getRecordingHintValue() != true))
+	    || (mParameters.getRecordingHintValue() != true))
             && (!mParameters.isSecureMode())) {
-
         rc = addStreamToChannel(pChannel, CAM_STREAM_TYPE_ANALYSIS,
                 NULL, this);
         if (rc != NO_ERROR) {
@@ -8020,13 +8023,30 @@ void QCamera2HardwareInterface::returnStreamBuffer(void *data,
                                                    void *cookie,
                                                    int32_t /*cbStatus*/)
 {
-    QCameraStream *stream = ( QCameraStream * ) cookie;
-    int idx = *((int *)data);
-    if ((NULL != stream) && (0 <= idx)) {
-        stream->bufDone((uint32_t)idx);
-    } else {
-        ALOGE("%s: Cannot return buffer %d %p", __func__, idx, cookie);
+    QCamera2HardwareInterface *pme = (QCamera2HardwareInterface *) cookie;
+    qcamera_stream_release_t *streamRelease = (qcamera_stream_release_t *) data;
+    if ((NULL != streamRelease) && (NULL != pme)) {
+        QCameraStream *stream = NULL;
+        for (size_t i = 0; i < QCAMERA_CH_TYPE_MAX; i++) {
+            if (pme->m_channels[i]) {
+                stream = pme->m_channels[i]->getStreamByHandle(
+                        streamRelease->stream_handle);
+                if (NULL != stream) {
+                    break;
+                }
+            }
+        }
+        if (NULL != stream) {
+            stream->bufDone(streamRelease->buf_idx);
+        } else {
+            ALOGE("%s: Stream with handle: %d not present!", __func__,
+                    streamRelease->stream_handle);
+        }
     }
+
+    if (NULL != streamRelease) {
+        free(streamRelease);
+     }
 }
 
 /*===========================================================================

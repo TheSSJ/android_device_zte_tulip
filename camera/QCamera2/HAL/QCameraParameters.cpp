@@ -435,6 +435,8 @@ const char QCameraParameters::KEY_QC_WB_CCT_MODE[] = "color-temperature";
 const char QCameraParameters::KEY_QC_WB_GAIN_MODE[] = "rbgb-gains";
 const char QCameraParameters::KEY_QC_NOISE_REDUCTION_MODE[] = "noise-reduction-mode";
 const char QCameraParameters::KEY_QC_NOISE_REDUCTION_MODE_VALUES[] = "noise-reduction-mode-values";
+const char QCameraParameters::VALUE_VIDEO_HDR_MODE_SENSOR[] = "sensor";
+const char QCameraParameters::VALUE_VIDEO_HDR_MODE_STAGGERED[] = "staggered";
 
 #ifdef TARGET_TS_MAKEUP
 const char QCameraParameters::KEY_TS_MAKEUP[] = "tsmakeup";
@@ -775,9 +777,17 @@ const QCameraParameters::QCameraMap<int>
 
 const QCameraParameters::QCameraMap<int>
         QCameraParameters::NOISE_REDUCTION_MODES_MAP[] = {
-    { VALUE_OFF, 0 },
-    { VALUE_FAST,  1 },
-    { VALUE_HIGH_QUALITY,  2 }
+    { VALUE_OFF, CAM_NOISE_REDUCTION_MODE_OFF },
+    { VALUE_FAST, CAM_NOISE_REDUCTION_MODE_FAST },
+    { VALUE_HIGH_QUALITY, CAM_NOISE_REDUCTION_MODE_HIGH_QUALITY }
+};
+
+const QCameraParameters::QCameraMap<cam_intf_video_hdr_mode_t>
+        QCameraParameters::VIDEO_HDR_MODES_MAP[] = {
+    { VALUE_OFF, CAM_INTF_VIDEO_HDR_MODE_OFF },
+    { VALUE_ON, CAM_INTF_VIDEO_HDR_MODE_SENSOR },
+    { VALUE_VIDEO_HDR_MODE_SENSOR, CAM_INTF_VIDEO_HDR_MODE_SENSOR },
+    { VALUE_VIDEO_HDR_MODE_STAGGERED, CAM_INTF_VIDEO_HDR_MODE_STAGGERED }
 };
 
 #define DEFAULT_CAMERA_AREA "(0, 0, 0, 0, 0)"
@@ -850,9 +860,9 @@ QCameraParameters::QCameraParameters()
       m_bOptiZoomOn(false),
       m_bSceneSelection(false),
       m_SelectedScene(CAM_SCENE_MODE_MAX),
+      m_bSwTnrOn(false),
       m_bSeeMoreOn(false),
       m_bStillMoreOn(false),
-      m_bHighQualityNoiseReductionMode(false),
       m_bHfrMode(false),
       m_bSensorHDREnabled(false),
       m_bRdiMode(false),
@@ -974,7 +984,6 @@ QCameraParameters::QCameraParameters(const String8 &params)
     m_SelectedScene(CAM_SCENE_MODE_MAX),
     m_bSeeMoreOn(false),
     m_bStillMoreOn(false),
-    m_bHighQualityNoiseReductionMode(false),
     m_bHfrMode(false),
     m_bSensorHDREnabled(false),
     m_bRdiMode(false),
@@ -1662,7 +1671,6 @@ int32_t QCameraParameters::setLiveSnapshotSize(const QCameraParameters& params)
     char value[PROPERTY_VALUE_MAX];
     property_get("persist.camera.opt.livepic", value, "1");
     bool useOptimal = atoi(value) > 0 ? true : false;
-    bool vHdrOn;
     int32_t liveSnapWidth = 0, liveSnapHeight = 0;
     // use picture size from user setting
     params.getPictureSize(&m_LiveSnapshotSize.width, &m_LiveSnapshotSize.height);
@@ -1689,8 +1697,9 @@ int32_t QCameraParameters::setLiveSnapshotSize(const QCameraParameters& params)
     const char *hsrStr = params.get(KEY_QC_VIDEO_HIGH_SPEED_RECORDING);
 
     const char *vhdrStr = params.get(KEY_QC_VIDEO_HDR);
-    vHdrOn = (vhdrStr != NULL && (0 == strcmp(vhdrStr,"on"))) ? true : false;
-    if (vHdrOn) {
+    cam_intf_video_hdr_mode_t vHdrOn = (cam_intf_video_hdr_mode_t)
+            lookupAttr(VIDEO_HDR_MODES_MAP, PARAM_MAP_SIZE(VIDEO_HDR_MODES_MAP), vhdrStr);
+    if (CAM_INTF_VIDEO_HDR_MODE_OFF != vHdrOn) {
         livesnapshot_sizes_tbl_cnt = m_pCapability->vhdr_livesnapshot_sizes_tbl_cnt;
         livesnapshot_sizes_tbl = &m_pCapability->vhdr_livesnapshot_sizes_tbl[0];
     }
@@ -2874,7 +2883,7 @@ int32_t QCameraParameters::setVideoHDR(const QCameraParameters& params)
     if (str != NULL) {
         if (prev_str == NULL ||
             strcmp(str, prev_str) != 0) {
-            return setVideoHDR(str);
+	    return setVideoHDR(str);
         }
     }
     return NO_ERROR;
@@ -3786,7 +3795,6 @@ int32_t QCameraParameters::setSeeMore(const QCameraParameters& params)
     CDBG_HIGH("%s: str =%s & prev_str =%s", __func__, str, prev_str);
     if (str != NULL) {
         if (prev_str == NULL || strcmp(str, prev_str) != 0) {
-            m_bNeedRestart = true;
             return setSeeMore(str);
         }
     }
@@ -3816,8 +3824,7 @@ int32_t QCameraParameters::setNoiseReductionMode(const QCameraParameters& params
     CDBG_HIGH("%s: str =%s & prev_str =%s", __func__, str, prev_str);
     if (str != NULL) {
         if (prev_str == NULL || strcmp(str, prev_str) != 0) {
-            m_bNeedRestart = true;
-            return setNoiseReductionMode(str);
+	    return setNoiseReductionMode(str);
         }
     }
     return NO_ERROR;
@@ -4837,7 +4844,6 @@ int32_t QCameraParameters::updateParameters(QCameraParameters& params,
     if ((rc = setRetroActiveBurstNum(params)))          final_rc = rc;
     if ((rc = setSnapshotFDReq(params)))                final_rc = rc;
     if ((rc = setTintlessValue(params)))                final_rc = rc;
-    if ((rc = setCDSMode(params)))                      final_rc = rc;
     if ((rc = setTemporalDenoise(params)))              final_rc = rc;
     if ((rc = setCacheVideoBuffers(params)))            final_rc = rc;
     if ((rc = setInstantCapture(params)))               final_rc = rc;
@@ -4853,7 +4859,7 @@ int32_t QCameraParameters::updateParameters(QCameraParameters& params,
     if ((rc = setStillMore(params)))                    final_rc = rc;
     if ((rc = setCustomParams(params)))                 final_rc = rc;
     if ((rc = setNoiseReductionMode(params)))           final_rc = rc;
-
+    if ((rc = setCDSMode(params)))                      final_rc = rc;
     if ((rc = updateFlash(false)))                      final_rc = rc;
     if ((rc = setLongshotParam(params)))                final_rc = rc;
     if ((rc = setDualLedCalibration()))                 final_rc = rc;
@@ -5218,7 +5224,7 @@ int32_t QCameraParameters::initDefaultParameters()
             AUTO_EXPOSURE_MAP,
             PARAM_MAP_SIZE(AUTO_EXPOSURE_MAP));
     set(KEY_QC_SUPPORTED_AUTO_EXPOSURE, autoExposureValues.string());
-    setAutoExposure(AUTO_EXPOSURE_FRAME_AVG);
+    setAutoExposure(AUTO_EXPOSURE_CENTER_WEIGHTED);
 
     // Set Exposure Compensation
     set(KEY_MAX_EXPOSURE_COMPENSATION, m_pCapability->exposure_compensation_max); // 12
@@ -5233,7 +5239,7 @@ int32_t QCameraParameters::initDefaultParameters()
             ANTIBANDING_MODES_MAP,
             PARAM_MAP_SIZE(ANTIBANDING_MODES_MAP));
     set(KEY_SUPPORTED_ANTIBANDING, antibandingValues);
-    setAntibanding(ANTIBANDING_OFF);
+    setAntibanding(ANTIBANDING_AUTO);
 
     // Set Effect
     String8 effectValues = createValuesString(
@@ -5660,10 +5666,27 @@ int32_t QCameraParameters::initDefaultParameters()
     setSecureMode(VALUE_DISABLE);
 
     //Set video HDR
-    if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_VIDEO_HDR) > 0) {
-        set(KEY_QC_SUPPORTED_VIDEO_HDR_MODES, onOffValues);
-        set(KEY_QC_VIDEO_HDR, VALUE_OFF);
+    String8 videoHdrValues;
+    int videoHdrValuesCount = 0;
+    if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_STAGGERED_VIDEO_HDR) > 0) {
+      videoHdrValues.append(VALUE_VIDEO_HDR_MODE_STAGGERED);
+      videoHdrValuesCount++;
     }
+    if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_VIDEO_HDR) > 0) {
+      if (videoHdrValuesCount > 0) {
+          videoHdrValues.append(",");
+      }
+      videoHdrValues.append(VALUE_VIDEO_HDR_MODE_SENSOR);
+      videoHdrValues.append(",");
+      videoHdrValues.append(VALUE_ON);
+      videoHdrValuesCount++;
+    }
+    if (videoHdrValuesCount > 0) {
+        videoHdrValues.append(",");
+    }
+    videoHdrValues.append(VALUE_OFF);
+    set(KEY_QC_SUPPORTED_VIDEO_HDR_MODES, videoHdrValues);
+    set(KEY_QC_VIDEO_HDR, VALUE_OFF);
 
     //Set HW Sensor Snapshot HDR
     if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_SENSOR_HDR)> 0) {
@@ -6103,6 +6126,9 @@ int32_t QCameraParameters::setPreviewFpsRange(int min_fps,
     property_get("persist.debug.set.fixedfps", value, "0");
     fixedFpsValue = atoi(value);
 
+    if(!isHfrMode() && min_fps > 15000)
+	min_fps = 15000;
+
     CDBG("%s: E minFps = %d, maxFps = %d , vid minFps = %d, vid maxFps = %d",
                 __func__, min_fps, max_fps, vid_min_fps, vid_max_fps);
 
@@ -6110,8 +6136,9 @@ int32_t QCameraParameters::setPreviewFpsRange(int min_fps,
       min_fps = max_fps = vid_min_fps = vid_max_fps = (int)fixedFpsValue*1000;
     }
     snprintf(str, sizeof(str), "%d,%d", min_fps, max_fps);
-    CDBG_HIGH("%s: Setting preview fps range %s", __func__, str);
-    updateParamEntry(KEY_PREVIEW_FPS_RANGE, str);
+//    CDBG_HIGH("%s: Setting preview fps range %s", __func__, str);
+//    updateParamEntry(KEY_PREVIEW_FPS_RANGE, str);
+    updateParamEntry(KEY_PREVIEW_FPS_RANGE, "7000,30000");
     cam_fps_range_t fps_range;
     memset(&fps_range, 0x00, sizeof(cam_fps_range_t));
     fps_range.min_fps = (float)min_fps / 1000.0f;
@@ -6556,11 +6583,11 @@ int32_t QCameraParameters::setSensorSnapshotHDR(const char *snapshotHDR)
 int32_t QCameraParameters::setVideoHDR(const char *videoHDR)
 {
     if (videoHDR != NULL) {
-        int32_t value = lookupAttr(ON_OFF_MODES_MAP, PARAM_MAP_SIZE(ON_OFF_MODES_MAP), videoHDR);
+        int value = lookupAttr(VIDEO_HDR_MODES_MAP, PARAM_MAP_SIZE(VIDEO_HDR_MODES_MAP), videoHDR);
         if (value != NAME_NOT_FOUND) {
             CDBG_HIGH("%s: Setting Video HDR %s", __func__, videoHDR);
             updateParamEntry(KEY_QC_VIDEO_HDR, videoHDR);
-            if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_VIDEO_HDR, value)) {
+            if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_VIDEO_HDR, (cam_intf_video_hdr_mode_t)value)) {
                 return BAD_VALUE;
             }
             return NO_ERROR;
@@ -7402,7 +7429,7 @@ int32_t QCameraParameters::setCDSMode(const QCameraParameters& params)
                         video_str);
                 if (cds_mode != NAME_NOT_FOUND) {
                     updateParamEntry(KEY_QC_VIDEO_CDS_MODE, video_str);
-                    if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, cds_mode)) {
+                    if (setCDSMode(cds_mode, false)) {
                         ALOGE("%s:Failed CDS MODE to update table", __func__);
                         rc = BAD_VALUE;
                     } else {
@@ -7418,12 +7445,12 @@ int32_t QCameraParameters::setCDSMode(const QCameraParameters& params)
         } else {
             char video_prop[PROPERTY_VALUE_MAX];
             memset(video_prop, 0, sizeof(video_prop));
-            property_get("persist.camera.video.CDS", video_prop, CDS_MODE_ON);
+            property_get("persist.camera.video.CDS", video_prop, CDS_MODE_OFF);
             int32_t cds_mode = lookupAttr(CDS_MODES_MAP, PARAM_MAP_SIZE(CDS_MODES_MAP),
                     video_prop);
             if (cds_mode != NAME_NOT_FOUND) {
                 updateParamEntry(KEY_QC_VIDEO_CDS_MODE, video_prop);
-                if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, cds_mode)) {
+                if (setCDSMode(cds_mode, false)) {
                     ALOGE("%s:Failed CDS MODE to update table", __func__);
                     rc = BAD_VALUE;
                 } else {
@@ -7442,7 +7469,7 @@ int32_t QCameraParameters::setCDSMode(const QCameraParameters& params)
                         str);
                 if (cds_mode != NAME_NOT_FOUND) {
                     updateParamEntry(KEY_QC_CDS_MODE, str);
-                    if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, cds_mode)) {
+                    if (setCDSMode(cds_mode, false)) {
                         ALOGE("%s:Failed CDS MODE to update table", __func__);
                         rc = BAD_VALUE;
                     } else {
@@ -7458,12 +7485,12 @@ int32_t QCameraParameters::setCDSMode(const QCameraParameters& params)
         } else {
             char prop[PROPERTY_VALUE_MAX];
             memset(prop, 0, sizeof(prop));
-            property_get("persist.camera.CDS", prop, CDS_MODE_ON);
+            property_get("persist.camera.CDS", prop, CDS_MODE_OFF);
             int32_t cds_mode = lookupAttr(CDS_MODES_MAP, PARAM_MAP_SIZE(CDS_MODES_MAP),
                     prop);
             if (cds_mode != NAME_NOT_FOUND) {
                 updateParamEntry(KEY_QC_CDS_MODE, prop);
-                if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, cds_mode)) {
+                if (setCDSMode(cds_mode, false)) {
                     ALOGE("%s:Failed CDS MODE to update table", __func__);
                     rc = BAD_VALUE;
                 } else {
@@ -8526,11 +8553,24 @@ int32_t QCameraParameters::setNoiseReductionMode(const char *noiseReductionModeS
 {
     CDBG_HIGH("%s: noiseReductionModeStr = %s", __func__, noiseReductionModeStr);
     if (noiseReductionModeStr != NULL) {
-        int value = lookupAttr(NOISE_REDUCTION_MODES_MAP, PARAM_MAP_SIZE(NOISE_REDUCTION_MODES_MAP),
+        int value = lookupAttr(NOISE_REDUCTION_MODES_MAP,
+		PARAM_MAP_SIZE(NOISE_REDUCTION_MODES_MAP),
                 noiseReductionModeStr);
         if (value != NAME_NOT_FOUND) {
-            m_bHighQualityNoiseReductionMode =
-                    !strncmp(VALUE_HIGH_QUALITY, noiseReductionModeStr, strlen(VALUE_HIGH_QUALITY));
+	    if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf,
+                    CAM_INTF_META_NOISE_REDUCTION_MODE,
+                    (cam_noise_reduction_mode_t)value)) {
+                ALOGE("%s:Failed to update table", __func__);
+                return BAD_VALUE;
+            }
+	    m_bSwTnrOn = (CAM_NOISE_REDUCTION_MODE_HIGH_QUALITY ==
+                    (cam_noise_reduction_mode_t)value) ? true : false;
+
+            if (setCDSMode(mCds_mode, false)) {
+                ALOGE("%s:Failed CDS MODE to update table", __func__);
+                return BAD_VALUE;
+            }
+
             updateParamEntry(KEY_QC_NOISE_REDUCTION_MODE, noiseReductionModeStr);
             return NO_ERROR;
         }
@@ -8846,7 +8886,12 @@ int32_t QCameraParameters::setSeeMore(const char *seeMoreStr)
                 }
             }
             updateParamEntry(KEY_QC_SEE_MORE, seeMoreStr);
-            return NO_ERROR;
+            if (setCDSMode(mCds_mode, false)) {
+                ALOGE("%s:Failed CDS MODE to update table", __func__);
+                return BAD_VALUE;
+            }
+
+	    return NO_ERROR;
         }
     }
     ALOGE("Invalid see more value: %s",
@@ -12141,7 +12186,7 @@ bool QCameraParameters::setStreamConfigure(bool isCapture,
     property_get("persist.camera.raw_yuv", value, "0");
     raw_yuv = atoi(value) > 0 ? true : false;
 
-    if (isZSLMode() && getRecordingHintValue() != true) {
+if (isZSLMode() && (getRecordingHintValue() != true)) {
         stream_config_info.type[stream_config_info.num_streams] =
             CAM_STREAM_TYPE_PREVIEW;
         getStreamDimension(CAM_STREAM_TYPE_PREVIEW,
@@ -12228,8 +12273,7 @@ bool QCameraParameters::setStreamConfigure(bool isCapture,
 
         // Analysis stream is needed in all use cases of DCRF and needed only in camera mode in
         // in non DCRF use cases
-        if ((getDcrf() == true) ||
-                (getRecordingHintValue() != true)) {
+        if ((getDcrf() == true) || (getRecordingHintValue() != true)) {
             stream_config_info.type[stream_config_info.num_streams] =
                     CAM_STREAM_TYPE_ANALYSIS;
             getStreamDimension(CAM_STREAM_TYPE_ANALYSIS,
@@ -12432,17 +12476,28 @@ int32_t QCameraParameters::addOnlineRotation(uint32_t rotation, uint32_t streamI
  *==========================================================================*/
 bool QCameraParameters::needThumbnailReprocess(uint32_t *pFeatureMask)
 {
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_CHROMA_FLASH;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_UBIFOCUS;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_REFOCUS;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_OPTIZOOM;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_HDR;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_DENOISE2D;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_CAC;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_SHARPNESS;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_FLIP;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_TRUEPORTRAIT;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_STILLMORE;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_DCRF;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_CDS;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_DSDN;
+    *pFeatureMask &= ~CAM_QCOM_FEATURE_SW2D;
+    *pFeatureMask &= ~CAM_QTI_FEATURE_SW_TNR;
+
     if (isUbiFocusEnabled() || isChromaFlashEnabled() ||
             isOptiZoomEnabled() || isUbiRefocus() ||
             isStillMoreEnabled() ||
             (isHDREnabled() && !isHDRThumbnailProcessNeeded())
             || isUBWCEnabled()) {
-        *pFeatureMask &= ~CAM_QCOM_FEATURE_CHROMA_FLASH;
-        *pFeatureMask &= ~CAM_QCOM_FEATURE_UBIFOCUS;
-        *pFeatureMask &= ~CAM_QCOM_FEATURE_REFOCUS;
-        *pFeatureMask &= ~CAM_QCOM_FEATURE_OPTIZOOM;
-        *pFeatureMask &= ~CAM_QCOM_FEATURE_STILLMORE;
-        *pFeatureMask &= ~CAM_QCOM_FEATURE_HDR;
         return false;
     } else {
         cam_dimension_t thumb_dim;
@@ -12744,8 +12799,7 @@ int32_t QCameraParameters::updatePpFeatureMask(cam_stream_type_t stream_type) {
        feature_mask |= CAM_QCOM_FEATURE_LLVD;
     }
 
-    if (isHighQualityNoiseReductionMode() &&
-            ((stream_type == CAM_STREAM_TYPE_VIDEO) ||
+    if (((stream_type == CAM_STREAM_TYPE_VIDEO) ||
             (stream_type == CAM_STREAM_TYPE_PREVIEW && getRecordingHintValue()))) {
         feature_mask |= CAM_QTI_FEATURE_SW_TNR;
     }
@@ -13178,11 +13232,7 @@ String8 QCameraParameters::dump()
  *==========================================================================*/
 uint8_t QCameraParameters::getNumOfExtraBuffersForVideo()
 {
-    uint8_t numOfBufs = 0;
-
-    if (isSeeMoreEnabled() || isHighQualityNoiseReductionMode()) {
-        numOfBufs = 1;
-    }
+    uint8_t numOfBufs = 3;
 
     return numOfBufs;
 }
@@ -13201,9 +13251,8 @@ uint8_t QCameraParameters::getNumOfExtraBuffersForPreview()
 {
     uint8_t numOfBufs = 0;
 
-    if ((isSeeMoreEnabled() || isHighQualityNoiseReductionMode())
-            && !isZSLMode() && getRecordingHintValue()) {
-        numOfBufs = 1;
+    if (( isSeeMoreEnabled() || isSwTnrEnabled() )&& !isZSLMode() && getRecordingHintValue()) {
+        numOfBufs = 3;
     }
 
     return numOfBufs;
@@ -13297,11 +13346,17 @@ int32_t QCameraParameters::setCDSMode(int32_t cds_mode, bool initCommit)
     }
 
     int32_t rc = NO_ERROR;
-    if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, cds_mode)) {
-        ALOGE("%s:Failed to update cds mode", __func__);
-        return BAD_VALUE;
-    }
-
+    if (isSwTnrEnabled() || isSeeMoreEnabled()) {
+        if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, CAM_CDS_MODE_OFF)) {
+            ALOGE("%s:Failed to update cds mode", __func__);
+            return BAD_VALUE;
+        }
+    } else {
+        if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_CDS_MODE, cds_mode)) {
+            ALOGE("%s:Failed to update cds mode", __func__);
+            return BAD_VALUE;
+        }
+     }
     if (initCommit) {
         rc = commitSetBatch();
         if (NO_ERROR != rc) {

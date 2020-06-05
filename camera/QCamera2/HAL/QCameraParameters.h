@@ -570,6 +570,8 @@ public:
     static const char VIDEO_ROTATION_90[];
     static const char VIDEO_ROTATION_180[];
     static const char VIDEO_ROTATION_270[];
+    static const char VALUE_VIDEO_HDR_MODE_SENSOR[];
+    static const char VALUE_VIDEO_HDR_MODE_STAGGERED[];
 
 #ifdef TARGET_TS_MAKEUP
     static const char KEY_TS_MAKEUP[];
@@ -684,6 +686,7 @@ public:
     int32_t setHDRAEBracket(cam_exp_bracketing_t hdrBracket);
     bool isHDREnabled();
     bool isAutoHDREnabled();
+    bool isStaggeredVideoHDRSupported(){ return ( (m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_STAGGERED_VIDEO_HDR) > 0 );};
     int32_t stopAEBracket();
     int32_t updateFlash(bool commitSettings);
     int32_t updateRAW(cam_dimension_t max_dim);
@@ -731,10 +734,10 @@ public:
     bool needThumbnailReprocess(uint32_t *pFeatureMask);
     inline bool isUbiFocusEnabled() {return m_bAFBracketingOn && !m_bReFocusOn;};
     inline bool isChromaFlashEnabled() {return m_bChromaFlashOn;};
-    inline bool isHighQualityNoiseReductionMode() {return m_bHighQualityNoiseReductionMode;};
     inline bool isTruePortraitEnabled() {return m_bTruePortraitOn;};
     inline size_t getTPMaxMetaSize() {
         return m_pCapability->true_portrait_settings_need.meta_max_size;};
+    inline bool isSwTnrEnabled() {return m_bSwTnrOn;};
     inline bool isSeeMoreEnabled() {return m_bSeeMoreOn;};
     inline bool isStillMoreEnabled() {return m_bStillMoreOn;};
     bool isOptiZoomEnabled();
@@ -1026,6 +1029,7 @@ private:
     static const QCameraMap<int> SEE_MORE_MODES_MAP[];
     static const QCameraMap<int> STILL_MORE_MODES_MAP[];
     static const QCameraMap<int> NOISE_REDUCTION_MODES_MAP[];
+    static const QCameraMap<cam_intf_video_hdr_mode_t> VIDEO_HDR_MODES_MAP[];
 
     cam_capability_t *m_pCapability;
     mm_camera_vtbl_t *m_pCamOpsTbl;
@@ -1093,9 +1097,9 @@ private:
     bool m_bSceneSelection;
     Mutex m_SceneSelectLock;
     cam_scene_mode_type m_SelectedScene;
+    bool m_bSwTnrOn;
     bool m_bSeeMoreOn;
     bool m_bStillMoreOn;
-    bool m_bHighQualityNoiseReductionMode;
     cam_fps_range_t m_hfrFpsRange;
     bool m_bHfrMode;
     bool m_bSensorHDREnabled;             // if HDR is enabled
