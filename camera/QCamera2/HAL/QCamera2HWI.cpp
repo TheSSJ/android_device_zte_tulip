@@ -39,9 +39,9 @@
 #include <binder/Parcel.h>
 #include <binder/IServiceManager.h>
 #include <utils/RefBase.h>
-#include "QServiceUtils.h"
+#include <QServiceUtils.h>
 #include <dlfcn.h>
-#include "QCameraParameters.h"
+
 #include "QCamera2HWI.h"
 #include "QCameraBufferMaps.h"
 #include "QCameraMem.h"
@@ -2402,7 +2402,7 @@ uint8_t QCamera2HardwareInterface::getBufNumRequired(cam_stream_type_t stream_ty
                         !mLongshotEnabled) {
                     // Single ZSL snapshot case
                     bufferCnt = zslQBuffers + CAMERA_MIN_STREAMING_BUFFERS +
-                            mParameters.getNumOfExtraBuffersForImageProc() + mParameters.getNumOfExtraHDRInBufsIfNeeded();
+                            mParameters.getNumOfExtraBuffersForImageProc()+mParameters.getNumOfExtraHDRInBufsIfNeeded();
                 }
                 else {
                     // ZSL Burst or Longshot case
@@ -2922,7 +2922,6 @@ QCameraHeapMemory *QCamera2HardwareInterface::allocateStreamInfoBuf(
                     streamInfo->user_buf_info.frame_buf_cnt,
                     streamInfo->user_buf_info.frameInterval);
         }
-	break;
     case CAM_STREAM_TYPE_PREVIEW:
         if (mParameters.getRecordingHintValue()) {
             const char* dis_param = mParameters.get(QCameraParameters::KEY_QC_DIS);
@@ -2934,8 +2933,9 @@ QCameraHeapMemory *QCamera2HardwareInterface::allocateStreamInfoBuf(
                 streamInfo->is_type = IS_TYPE_NONE;
             }
         }
-        if (mParameters.isSecureMode())
+        if (mParameters.isSecureMode()) {
             streamInfo->is_secure = SECURE;
+        }
         break;
     case CAM_STREAM_TYPE_ANALYSIS:
         streamInfo->noFrameExpected = 1;
@@ -3545,7 +3545,6 @@ int QCamera2HardwareInterface::autoFocus()
     cam_focus_mode_type focusMode = mParameters.getFocusMode();
     CDBG_HIGH("[AF_DBG] %s: focusMode=%d, m_currentFocusState=%d",
             __func__, focusMode, m_currentFocusState);
-    m_currentFocusState = CAM_AF_STATE_INACTIVE;
 
     switch (focusMode) {
     case CAM_FOCUS_MODE_AUTO:
@@ -5565,7 +5564,6 @@ void QCamera2HardwareInterface::camEvtHandle(uint32_t /*camera_handle*/,
                         obj->mDefCond.broadcast();
                         CDBG_HIGH("%s: broadcast mDefCond signal\n", __func__);
                     }
-		    [[fallthrough]];
                 default:
                     obj->processEvt(QCAMERA_SM_EVT_EVT_NOTIFY, payload);
                     break;
@@ -6462,8 +6460,9 @@ int32_t QCamera2HardwareInterface::addPreviewChannel()
     }
 
     if (((mParameters.getDcrf() == true)
-	    || (mParameters.getRecordingHintValue() != true))
+            || (mParameters.getRecordingHintValue() != true))
             && (!mParameters.isSecureMode())) {
+
         rc = addStreamToChannel(pChannel, CAM_STREAM_TYPE_ANALYSIS,
                 NULL, this);
         if (rc != NO_ERROR) {
@@ -8031,22 +8030,19 @@ void QCamera2HardwareInterface::returnStreamBuffer(void *data,
             if (pme->m_channels[i]) {
                 stream = pme->m_channels[i]->getStreamByHandle(
                         streamRelease->stream_handle);
-                if (NULL != stream) {
+                if (NULL != stream)
                     break;
-                }
             }
         }
-        if (NULL != stream) {
-            stream->bufDone(streamRelease->buf_idx);
-        } else {
-            ALOGE("%s: Stream with handle: %d not present!", __func__,
-                    streamRelease->stream_handle);
-        }
-    }
 
-    if (NULL != streamRelease) {
+        if (NULL != stream)
+            stream->bufDone(streamRelease->buf_idx);
+        else
+            ALOGE("%s: Stream with handle: %d not present!", __func__, streamRelease->stream_handle);
+   }
+
+   if (NULL != streamRelease)
         free(streamRelease);
-     }
 }
 
 /*===========================================================================

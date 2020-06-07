@@ -437,7 +437,6 @@ const char QCameraParameters::KEY_QC_NOISE_REDUCTION_MODE[] = "noise-reduction-m
 const char QCameraParameters::KEY_QC_NOISE_REDUCTION_MODE_VALUES[] = "noise-reduction-mode-values";
 const char QCameraParameters::VALUE_VIDEO_HDR_MODE_SENSOR[] = "sensor";
 const char QCameraParameters::VALUE_VIDEO_HDR_MODE_STAGGERED[] = "staggered";
-
 #ifdef TARGET_TS_MAKEUP
 const char QCameraParameters::KEY_TS_MAKEUP[] = "tsmakeup";
 const char QCameraParameters::KEY_TS_MAKEUP_WHITEN[] = "tsmakeup_whiten";
@@ -782,13 +781,13 @@ const QCameraParameters::QCameraMap<int>
     { VALUE_HIGH_QUALITY, CAM_NOISE_REDUCTION_MODE_HIGH_QUALITY }
 };
 
-const QCameraParameters::QCameraMap<cam_intf_video_hdr_mode_t>
+/*const QCameraParameters::QCameraMap<cam_intf_video_hdr_mode_t>
         QCameraParameters::VIDEO_HDR_MODES_MAP[] = {
     { VALUE_OFF, CAM_INTF_VIDEO_HDR_MODE_OFF },
     { VALUE_ON, CAM_INTF_VIDEO_HDR_MODE_SENSOR },
     { VALUE_VIDEO_HDR_MODE_SENSOR, CAM_INTF_VIDEO_HDR_MODE_SENSOR },
     { VALUE_VIDEO_HDR_MODE_STAGGERED, CAM_INTF_VIDEO_HDR_MODE_STAGGERED }
-};
+};*/
 
 #define DEFAULT_CAMERA_AREA "(0, 0, 0, 0, 0)"
 #define DATA_PTR(MEM_OBJ,INDEX) MEM_OBJ->getPtr( INDEX )
@@ -1696,13 +1695,11 @@ int32_t QCameraParameters::setLiveSnapshotSize(const QCameraParameters& params)
     cam_hfr_mode_t hfrMode = CAM_HFR_MODE_OFF;
     const char *hsrStr = params.get(KEY_QC_VIDEO_HIGH_SPEED_RECORDING);
 
-    const char *vhdrStr = params.get(KEY_QC_VIDEO_HDR);
-    cam_intf_video_hdr_mode_t vHdrOn = (cam_intf_video_hdr_mode_t)
-            lookupAttr(VIDEO_HDR_MODES_MAP, PARAM_MAP_SIZE(VIDEO_HDR_MODES_MAP), vhdrStr);
-    if (CAM_INTF_VIDEO_HDR_MODE_OFF != vHdrOn) {
-        livesnapshot_sizes_tbl_cnt = m_pCapability->vhdr_livesnapshot_sizes_tbl_cnt;
-        livesnapshot_sizes_tbl = &m_pCapability->vhdr_livesnapshot_sizes_tbl[0];
-    }
+//    const char *vhdrStr = params.get(KEY_QC_VIDEO_HDR);
+//    if (CAM_INTF_VIDEO_HDR_MODE_OFF != vHdrOn) {
+//        livesnapshot_sizes_tbl_cnt = m_pCapability->vhdr_livesnapshot_sizes_tbl_cnt;
+//        livesnapshot_sizes_tbl = &m_pCapability->vhdr_livesnapshot_sizes_tbl[0];
+//    }
     if ((hsrStr != NULL) && strcmp(hsrStr, "off")) {
         int32_t hsr = lookupAttr(HFR_MODES_MAP, PARAM_MAP_SIZE(HFR_MODES_MAP), hsrStr);
         if ((hsr != NAME_NOT_FOUND) && (hsr > CAM_HFR_MODE_OFF)) {
@@ -1735,7 +1732,7 @@ int32_t QCameraParameters::setLiveSnapshotSize(const QCameraParameters& params)
         }
     }
 
-    if (useOptimal || hfrMode != CAM_HFR_MODE_OFF || vHdrOn) {
+    if (useOptimal || hfrMode != CAM_HFR_MODE_OFF) {
         bool found = false;
 
         // first check if picture size is within the list of supported sizes
@@ -1764,7 +1761,7 @@ int32_t QCameraParameters::setLiveSnapshotSize(const QCameraParameters& params)
                 }
             }
 
-            if (!found && ((hfrMode != CAM_HFR_MODE_OFF) || vHdrOn)) {
+            if (!found && ((hfrMode != CAM_HFR_MODE_OFF))) {
                 // Cannot find matching aspect ration from supported live snapshot list
                 // choose the max dim from preview and video size
                 CDBG("%s: Cannot find matching aspect ratio, choose max of preview or video size", __func__);
@@ -2883,7 +2880,7 @@ int32_t QCameraParameters::setVideoHDR(const QCameraParameters& params)
     if (str != NULL) {
         if (prev_str == NULL ||
             strcmp(str, prev_str) != 0) {
-	    return setVideoHDR(str);
+            return setVideoHDR(str);
         }
     }
     return NO_ERROR;
@@ -3396,7 +3393,7 @@ int32_t QCameraParameters::setMeteringAreas(const QCameraParameters& params)
 {
     const char *str = params.get(KEY_METERING_AREAS);
     if (str != NULL) {
-        int max_num_mtr_areas = 5; //getInt(KEY_MAX_NUM_METERING_AREAS);
+        int max_num_mtr_areas = 5;
         if(max_num_mtr_areas == 0) {
             ALOGE("%s: max num of metering areas is 0, cannot set focus areas", __func__);
             return BAD_VALUE;
@@ -3824,7 +3821,7 @@ int32_t QCameraParameters::setNoiseReductionMode(const QCameraParameters& params
     CDBG_HIGH("%s: str =%s & prev_str =%s", __func__, str, prev_str);
     if (str != NULL) {
         if (prev_str == NULL || strcmp(str, prev_str) != 0) {
-	    return setNoiseReductionMode(str);
+            return setNoiseReductionMode(str);
         }
     }
     return NO_ERROR;
@@ -4860,6 +4857,7 @@ int32_t QCameraParameters::updateParameters(QCameraParameters& params,
     if ((rc = setCustomParams(params)))                 final_rc = rc;
     if ((rc = setNoiseReductionMode(params)))           final_rc = rc;
     if ((rc = setCDSMode(params)))                      final_rc = rc;
+
     if ((rc = updateFlash(false)))                      final_rc = rc;
     if ((rc = setLongshotParam(params)))                final_rc = rc;
     if ((rc = setDualLedCalibration()))                 final_rc = rc;
@@ -5133,7 +5131,7 @@ int32_t QCameraParameters::initDefaultParameters()
     }
 
     // Set metering areas
-    m_pCapability->max_num_metering_areas = 5; //hardcode
+    m_pCapability->max_num_metering_areas = 5;
     if (m_pCapability->max_num_metering_areas > MAX_ROI) {
         m_pCapability->max_num_metering_areas = MAX_ROI;
     }
@@ -5224,7 +5222,7 @@ int32_t QCameraParameters::initDefaultParameters()
             AUTO_EXPOSURE_MAP,
             PARAM_MAP_SIZE(AUTO_EXPOSURE_MAP));
     set(KEY_QC_SUPPORTED_AUTO_EXPOSURE, autoExposureValues.string());
-    setAutoExposure(AUTO_EXPOSURE_CENTER_WEIGHTED);
+    setAutoExposure(AUTO_EXPOSURE_FRAME_AVG);
 
     // Set Exposure Compensation
     set(KEY_MAX_EXPOSURE_COMPENSATION, m_pCapability->exposure_compensation_max); // 12
@@ -5668,10 +5666,11 @@ int32_t QCameraParameters::initDefaultParameters()
     //Set video HDR
     String8 videoHdrValues;
     int videoHdrValuesCount = 0;
-    if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_STAGGERED_VIDEO_HDR) > 0) {
-      videoHdrValues.append(VALUE_VIDEO_HDR_MODE_STAGGERED);
-      videoHdrValuesCount++;
-    }
+//    if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_STAGGERED_VIDEO_HDR) > 0) {
+//      videoHdrValues.append(VALUE_VIDEO_HDR_MODE_STAGGERED);
+//      videoHdrValuesCount++;
+//    }
+
     if ((m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_VIDEO_HDR) > 0) {
       if (videoHdrValuesCount > 0) {
           videoHdrValues.append(",");
@@ -6126,9 +6125,6 @@ int32_t QCameraParameters::setPreviewFpsRange(int min_fps,
     property_get("persist.debug.set.fixedfps", value, "0");
     fixedFpsValue = atoi(value);
 
-    if(!isHfrMode() && min_fps > 15000)
-	min_fps = 15000;
-
     CDBG("%s: E minFps = %d, maxFps = %d , vid minFps = %d, vid maxFps = %d",
                 __func__, min_fps, max_fps, vid_min_fps, vid_max_fps);
 
@@ -6136,9 +6132,8 @@ int32_t QCameraParameters::setPreviewFpsRange(int min_fps,
       min_fps = max_fps = vid_min_fps = vid_max_fps = (int)fixedFpsValue*1000;
     }
     snprintf(str, sizeof(str), "%d,%d", min_fps, max_fps);
-//    CDBG_HIGH("%s: Setting preview fps range %s", __func__, str);
-//    updateParamEntry(KEY_PREVIEW_FPS_RANGE, str);
-    updateParamEntry(KEY_PREVIEW_FPS_RANGE, "7000,30000");
+    CDBG_HIGH("%s: Setting preview fps range %s", __func__, str);
+    updateParamEntry(KEY_PREVIEW_FPS_RANGE, str);
     cam_fps_range_t fps_range;
     memset(&fps_range, 0x00, sizeof(cam_fps_range_t));
     fps_range.min_fps = (float)min_fps / 1000.0f;
@@ -6555,9 +6550,9 @@ int32_t QCameraParameters::setSensorSnapshotHDR(const char *snapshotHDR)
         if (value != NAME_NOT_FOUND) {
             CDBG_HIGH("%s: Setting Sensor Snapshot HDR %s", __func__, snapshotHDR);
             updateParamEntry(KEY_QC_SENSOR_HDR, snapshotHDR);
-           // if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_SENSOR_HDR, value)) {
-           //     return BAD_VALUE;
-           // }
+//            if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_SENSOR_HDR, value)) {
+//                return BAD_VALUE;
+//            }
             return NO_ERROR;
         }
     }
@@ -6583,11 +6578,11 @@ int32_t QCameraParameters::setSensorSnapshotHDR(const char *snapshotHDR)
 int32_t QCameraParameters::setVideoHDR(const char *videoHDR)
 {
     if (videoHDR != NULL) {
-        int value = lookupAttr(VIDEO_HDR_MODES_MAP, PARAM_MAP_SIZE(VIDEO_HDR_MODES_MAP), videoHDR);
+	 int32_t value = lookupAttr(ON_OFF_MODES_MAP, PARAM_MAP_SIZE(ON_OFF_MODES_MAP), videoHDR);
         if (value != NAME_NOT_FOUND) {
             CDBG_HIGH("%s: Setting Video HDR %s", __func__, videoHDR);
             updateParamEntry(KEY_QC_VIDEO_HDR, videoHDR);
-            if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_VIDEO_HDR, (cam_intf_video_hdr_mode_t)value)) {
+            if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf, CAM_INTF_PARM_VIDEO_HDR, value)) {
                 return BAD_VALUE;
             }
             return NO_ERROR;
@@ -7429,7 +7424,7 @@ int32_t QCameraParameters::setCDSMode(const QCameraParameters& params)
                         video_str);
                 if (cds_mode != NAME_NOT_FOUND) {
                     updateParamEntry(KEY_QC_VIDEO_CDS_MODE, video_str);
-                    if (setCDSMode(cds_mode, false)) {
+		    if (setCDSMode(cds_mode, false)) {
                         ALOGE("%s:Failed CDS MODE to update table", __func__);
                         rc = BAD_VALUE;
                     } else {
@@ -7450,7 +7445,7 @@ int32_t QCameraParameters::setCDSMode(const QCameraParameters& params)
                     video_prop);
             if (cds_mode != NAME_NOT_FOUND) {
                 updateParamEntry(KEY_QC_VIDEO_CDS_MODE, video_prop);
-                if (setCDSMode(cds_mode, false)) {
+		if (setCDSMode(cds_mode, false)) {
                     ALOGE("%s:Failed CDS MODE to update table", __func__);
                     rc = BAD_VALUE;
                 } else {
@@ -8554,23 +8549,22 @@ int32_t QCameraParameters::setNoiseReductionMode(const char *noiseReductionModeS
     CDBG_HIGH("%s: noiseReductionModeStr = %s", __func__, noiseReductionModeStr);
     if (noiseReductionModeStr != NULL) {
         int value = lookupAttr(NOISE_REDUCTION_MODES_MAP,
-		PARAM_MAP_SIZE(NOISE_REDUCTION_MODES_MAP),
-                noiseReductionModeStr);
+               PARAM_MAP_SIZE(NOISE_REDUCTION_MODES_MAP),
+               noiseReductionModeStr);
         if (value != NAME_NOT_FOUND) {
-	    if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf,
+           if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf,
                     CAM_INTF_META_NOISE_REDUCTION_MODE,
                     (cam_noise_reduction_mode_t)value)) {
                 ALOGE("%s:Failed to update table", __func__);
                 return BAD_VALUE;
             }
-	    m_bSwTnrOn = (CAM_NOISE_REDUCTION_MODE_HIGH_QUALITY ==
+           m_bSwTnrOn = (CAM_NOISE_REDUCTION_MODE_HIGH_QUALITY ==
                     (cam_noise_reduction_mode_t)value) ? true : false;
 
             if (setCDSMode(mCds_mode, false)) {
                 ALOGE("%s:Failed CDS MODE to update table", __func__);
                 return BAD_VALUE;
             }
-
             updateParamEntry(KEY_QC_NOISE_REDUCTION_MODE, noiseReductionModeStr);
             return NO_ERROR;
         }
@@ -8891,7 +8885,7 @@ int32_t QCameraParameters::setSeeMore(const char *seeMoreStr)
                 return BAD_VALUE;
             }
 
-	    return NO_ERROR;
+            return NO_ERROR;
         }
     }
     ALOGE("Invalid see more value: %s",
@@ -12186,7 +12180,7 @@ bool QCameraParameters::setStreamConfigure(bool isCapture,
     property_get("persist.camera.raw_yuv", value, "0");
     raw_yuv = atoi(value) > 0 ? true : false;
 
-if (isZSLMode() && (getRecordingHintValue() != true)) {
+    if (isZSLMode() && (getRecordingHintValue() != true)) {
         stream_config_info.type[stream_config_info.num_streams] =
             CAM_STREAM_TYPE_PREVIEW;
         getStreamDimension(CAM_STREAM_TYPE_PREVIEW,
@@ -13232,9 +13226,7 @@ String8 QCameraParameters::dump()
  *==========================================================================*/
 uint8_t QCameraParameters::getNumOfExtraBuffersForVideo()
 {
-    uint8_t numOfBufs = 3;
-
-    return numOfBufs;
+    return 3; //lol
 }
 
 /*===========================================================================
@@ -13251,10 +13243,8 @@ uint8_t QCameraParameters::getNumOfExtraBuffersForPreview()
 {
     uint8_t numOfBufs = 0;
 
-    if (( isSeeMoreEnabled() || isSwTnrEnabled() )&& !isZSLMode() && getRecordingHintValue()) {
-        numOfBufs = 3;
-    }
-
+    if (( isSeeMoreEnabled() || isSwTnrEnabled() )&& !isZSLMode() && getRecordingHintValue())
+	numOfBufs = 3;
     return numOfBufs;
 }
 
@@ -13357,6 +13347,7 @@ int32_t QCameraParameters::setCDSMode(int32_t cds_mode, bool initCommit)
             return BAD_VALUE;
         }
      }
+
     if (initCommit) {
         rc = commitSetBatch();
         if (NO_ERROR != rc) {

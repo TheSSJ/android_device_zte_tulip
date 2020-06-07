@@ -39,9 +39,7 @@
 #include "HAL/QCamera2HWI.h"
 #include "HAL3/QCamera3HWI.h"
 #include "QCamera2Factory.h"
-#include "HAL/QCameraMuxer.h"
-
-#define MAX_RETRIES 5
+#include "QCameraMuxer.h"
 
 using namespace android;
 
@@ -76,19 +74,6 @@ QCamera2Factory::QCamera2Factory()
     char prop[PROPERTY_VALUE_MAX];
     property_get("persist.camera.HAL3.enabled", prop, "1");
     int isHAL3Enabled = atoi(prop);
-
-    if (mNumOfCameras <= 0) {
-        for (int j = 0; j < MAX_RETRIES; j++) {
-            ALOGI("No camera devices detected, retrying...");
-            sleep(2);
-            mNumOfCameras = get_num_of_cameras();
-            if (mNumOfCameras <= 0) {
-                continue;
-            } else {
-                break;
-            }
-        }
-    }
 
     // Signifies whether system has to enable dual camera mode
     sprintf(propDefault, "%d", isDualCamAvailable(isHAL3Enabled));
@@ -528,25 +513,21 @@ int QCamera2Factory::openLegacy(
  *              none-zero failure code
  *==========================================================================*/
 
-//#define SYSFS_FLASH_PATH_BRIGHTNESS "/sys/class/leds/led:torch_0/brightness"
 #define SYSFS_FLASH_PATH_ENABLE "cat /sys/my_flash/open_torch"
 #define SYSFS_FLASH_PATH_DISABLE "cat /sys/my_flash/flash_off"
 
 int QCamera2Factory::setTorchMode(__attribute__((unused)) const char* camera_id, bool on)
 {
     int retVal(0);
-
     if (on) {
         ALOGD("%s: on\n", __FUNCTION__);
 	system(SYSFS_FLASH_PATH_ENABLE);
     }
 
-
     else {
         ALOGD("%s: off\n", __FUNCTION__);
         system(SYSFS_FLASH_PATH_DISABLE);
    }
-    retVal = 0;
 
     return retVal;
 }

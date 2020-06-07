@@ -2079,6 +2079,7 @@ typedef struct {
 #define CAM_QCOM_FEATURE_SW2D           (1U<<27)
 #define CAM_QTI_FEATURE_SW_TNR          (1U<<28)
 #define CAM_QCOM_FEATURE_MAX            (1U<<29)
+//#define CAM_QCOM_FEATURE_STAGGERED_VIDEO_HDR (1U<<36)
 #define CAM_QCOM_FEATURE_PP_SUPERSET    (CAM_QCOM_FEATURE_DENOISE2D|CAM_QCOM_FEATURE_CROP|\
                                          CAM_QCOM_FEATURE_ROTATION|CAM_QCOM_FEATURE_SHARPNESS|\
                                          CAM_QCOM_FEATURE_SCALE|CAM_QCOM_FEATURE_CAC|\
@@ -2131,6 +2132,12 @@ typedef struct {
     uint8_t flash_bracketing[CAM_MAX_FLASH_BRACKETING];
     uint8_t metadata_index;
 } cam_chroma_flash_t;
+
+typedef enum {
+    CAM_VIDEO_HDR_MODE_OFF,
+    CAM_VIDEO_HDR_MODE_ON,
+    CAM_VIDEO_HDR_MODE_MAX,
+} cam_video_hdr_mode_t;
 
 typedef enum {
     CAM_HDR_MODE_SINGLEFRAME,    /* Single frame HDR mode which does only tone mapping */

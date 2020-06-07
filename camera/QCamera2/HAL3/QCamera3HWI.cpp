@@ -36,8 +36,6 @@
 #include <camera/CameraMetadata.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <string>
-//#include <fstream>
 #include <fcntl.h>
 #include <stdint.h>
 #include <utils/Log.h>
@@ -327,8 +325,7 @@ QCamera3HardwareInterface::QCamera3HardwareInterface(uint32_t cameraId,
       mUpdateDebugLevel(false),
       mCallbacks(callbacks),
       mCaptureIntent(0),
-      mCacMode(0),
-      mLastFocusDistance(0.0)
+      mCacMode(0)
 {
     getLogLevel();
     mCameraDevice.common.tag = HARDWARE_DEVICE_TAG;
@@ -381,6 +378,7 @@ QCamera3HardwareInterface::QCamera3HardwareInterface(uint32_t cameraId,
          }
          dlclose(lib_surface_utils);
     }
+    memset(&mFpsRange, 0, sizeof(cam_fps_range_t));
 }
 
 /*===========================================================================
@@ -813,12 +811,13 @@ int QCamera3HardwareInterface::validateStreamDimensions(
             }
             break;
         } /* End of switch(newStream->format) */
+
 	if (!sizeFound) {
             ALOGE("%s: Error: Unsupported size of %d x %d requested for stream type:%d",
                     __func__, newStream->width, newStream->height, newStream->format);
             rc = -EINVAL;
             break;
-        }
+	}
     } /* End of for each stream */
     return rc;
 }
@@ -866,7 +865,7 @@ bool QCamera3HardwareInterface::isSupportChannelNeeded(camera3_stream_configurat
  *              none-zero failure code
  *
  *==========================================================================*/
-int32_t QCamera3HardwareInterface::getSensorOutputSize(cam_dimension_t &sensor_dim)
+int32_t QCamera3HardwareInterface::getSensorOutputSize(cam_dimension_t &sensor_dim, CameraMetadata *frame_settings)
 {
     int32_t rc = NO_ERROR;
 
@@ -880,6 +879,12 @@ int32_t QCamera3HardwareInterface::getSensorOutputSize(cam_dimension_t &sensor_d
 
     clear_metadata_buffer(mParameters);
 
+    if (frame_settings) {
+        rc = setHalFpsRange(*frame_settings, mParameters);
+        if (rc != NO_ERROR) {
+            ALOGE("%s: setHalFpsRange failed", __func__);
+        }
+    }
     rc = ADD_SET_PARAM_ENTRY_TO_BATCH(mParameters, CAM_INTF_PARM_MAX_DIMENSION,
             max_dim);
     if (rc != NO_ERROR) {
@@ -1187,8 +1192,8 @@ int QCamera3HardwareInterface::configureStreams(
         return -EINVAL;
     }
     /* Check whether we have zsl stream or 4k video case */
-    if (isZsl && m_bIs4KVideo) {
-        ALOGE("%s: Currently invalid configuration ZSL & 4K Video!", __func__);
+    if (isZsl && m_bIsVideo) {
+        ALOGE("%s: Currently invalid configuration ZSL&Video!", __func__);
         pthread_mutex_unlock(&mMutex);
         return -EINVAL;
     }
@@ -1304,7 +1309,7 @@ int QCamera3HardwareInterface::configureStreams(
     }
 
     /* Create analysis stream if h/w support is available */
-    if (gCamCapability[mCameraId]->hw_analysis_supported) {
+   // if (gCamCapability[mCameraId]->hw_analysis_supported) {
         mAnalysisChannel = new QCamera3SupportChannel(
                 mCameraHandle->camera_handle,
                 mCameraHandle->ops,
@@ -1317,11 +1322,11 @@ int QCamera3HardwareInterface::configureStreams(
                 : CAM_FORMAT_YUV_420_NV21),
                 this);
         if (!mAnalysisChannel) {
-            ALOGE("%s: H/W Analysis channel cannot be created", __func__);
+            ALOGE("%s: Analysis channel cannot be created", __func__);
             pthread_mutex_unlock(&mMutex);
             return -ENOMEM;
         }
-    }
+   // }
 
     if (isSupportChannelNeeded(streamList)) {
         mSupportChannel = new QCamera3SupportChannel(
@@ -1845,7 +1850,6 @@ int64_t QCamera3HardwareInterface::getMinFrameDuration(const camera3_capture_req
 {
     bool hasJpegStream = false;
     bool hasRawStream = false;
-    int64_t mMinFrameDuration = mMinProcessedFrameDuration;
     for (uint32_t i = 0; i < request->num_output_buffers; i ++) {
         const camera3_stream_t *stream = request->output_buffers[i].stream;
         if (stream->format == HAL_PIXEL_FORMAT_BLOB)
@@ -1855,11 +1859,11 @@ int64_t QCamera3HardwareInterface::getMinFrameDuration(const camera3_capture_req
                 stream->format == HAL_PIXEL_FORMAT_RAW16)
             hasRawStream = true;
     }
-    if (hasRawStream)
-        mMinFrameDuration = MAX(mMinRawFrameDuration, mMinFrameDuration);
-    if (hasJpegStream)
-        mMinFrameDuration = MAX(mMinJpegFrameDuration, mMinFrameDuration);
-    return mMinFrameDuration;
+
+    if (!hasJpegStream)
+        return MAX(mMinRawFrameDuration, mMinProcessedFrameDuration);
+    else
+        return MAX(MAX(mMinRawFrameDuration, mMinProcessedFrameDuration), mMinJpegFrameDuration);
 }
 
 /*===========================================================================
@@ -2694,6 +2698,29 @@ int QCamera3HardwareInterface::processCaptureRequest(
         mPendingRequest = 0;
         mFirstConfiguration = false;
     }
+
+    if (!mFirstRequest && meta.exists(ANDROID_CONTROL_AE_TARGET_FPS_RANGE)) {
+        cam_dimension_t sensor_dim;
+        cam_fps_range_t fps_range;
+        fps_range.min_fps = (float)
+                meta.find(ANDROID_CONTROL_AE_TARGET_FPS_RANGE).data.i32[0];
+        fps_range.max_fps = (float)
+                meta.find(ANDROID_CONTROL_AE_TARGET_FPS_RANGE).data.i32[1];
+        if ((fps_range.min_fps != mFpsRange.min_fps) ||
+                (fps_range.max_fps != mFpsRange.max_fps)) {
+            memset(&sensor_dim, 0, sizeof(sensor_dim));
+            rc = getSensorOutputSize(sensor_dim, &meta);
+            if (rc != NO_ERROR) {
+                ALOGE("%s: Failed to get sensor output size", __func__);
+                pthread_mutex_unlock(&mMutex);
+                return rc;
+            }
+            mCropRegionMapper.update(gCamCapability[mCameraId]->active_array_size.width,
+                    gCamCapability[mCameraId]->active_array_size.height,
+                    sensor_dim.width, sensor_dim.height);
+        }
+    }
+
 
     uint32_t frameNumber = request->frame_number;
     cam_stream_ID_t streamID;
@@ -4435,10 +4462,6 @@ QCamera3HardwareInterface::translateCbUrgentMetadataToResultMetadata
 
     IF_META_AVAILABLE(float, focusDistance, CAM_INTF_META_LENS_FOCUS_DISTANCE, metadata) {
         camMetadata.update(ANDROID_LENS_FOCUS_DISTANCE , focusDistance, 1);
-    } else {
-	ALOGE("Missing LENS_FOCUS_DISTANCE metadata. Use last known distance of %f", mLastFocusDistance);
-	camMetadata.update(ANDROID_LENS_FOCUS_DISTANCE , &mLastFocusDistance, 1);
-
     }
 
     IF_META_AVAILABLE(float, focusRange, CAM_INTF_META_LENS_FOCUS_RANGE, metadata) {
@@ -4928,14 +4951,7 @@ int QCamera3HardwareInterface::initCapabilities(uint32_t cameraId)
     int rc = 0;
     mm_camera_vtbl_t *cameraHandle = NULL;
     QCamera3HeapMemory *capabilityHeap = NULL;
-    /*std::string fname = "";
-    if (cameraId == 0)
-	fname = "/data/tmp/mem0.bin";
-    else
-	fname = "/data/tmp/mem1.bin";
 
-    std::ofstream b_stream(fname,std::fstream::out | std::fstream::binary);
-    */
     rc = camera_open((uint8_t)cameraId, &cameraHandle);
     if (rc) {
         ALOGE("%s: camera_open failed. rc = %d", __func__, rc);
@@ -4983,12 +4999,6 @@ int QCamera3HardwareInterface::initCapabilities(uint32_t cameraId)
     memcpy(gCamCapability[cameraId], DATA_PTR(capabilityHeap,0),
                                         sizeof(cam_capability_t));
     rc = 0;
-
-/*  if (b_stream)
-    b_stream.write(reinterpret_cast<char const *>(DATA_PTR(capabilityHeap,0)), sizeof(cam_capability_t));
-  else
-    ALOGE("%s: couldn't write data to file", __func__);
-*/
 
 query_failed:
     cameraHandle->ops->unmap_buf(cameraHandle->camera_handle,
@@ -5152,6 +5162,60 @@ cam_dimension_t QCamera3HardwareInterface::calcMaxJpegDim()
         }
     }
     return max_jpeg_dim;
+}
+
+/*===========================================================================
+ * FUNCTION   : patchPreviewSizes
+ *
+ * DESCRIPTION: patch s2 missed preview-sizes make sure all preview-sizes included
+ *     in picture-sizes list
+ *==========================================================================*/
+
+void QCamera3HardwareInterface::patchPreviewSizes(uint32_t cameraId) {
+    bool hasPatched = false;
+    for (int i = gCamCapability[cameraId]->preview_sizes_tbl_cnt - 1; i >= 0; i--) {
+        int32_t width = gCamCapability[cameraId]->preview_sizes_tbl[i].width;
+        int32_t height = gCamCapability[cameraId]->preview_sizes_tbl[i].height;
+        size_t count = MIN(gCamCapability[cameraId]->picture_sizes_tbl_cnt, MAX_SIZES_CNT);
+        bool sizeFound = false;
+        for (size_t i = 0; i < count; i++) {
+            if ((width == gCamCapability[cameraId]->picture_sizes_tbl[i].width) &&
+                     (height == gCamCapability[cameraId]->picture_sizes_tbl[i].height)) {
+                sizeFound = true;
+                break;
+            }
+        }
+        if (sizeFound) {
+             ALOGI("patchPreviewSizes(): %dx%d already exists don't need patch it", width, height);
+             continue;
+        }
+        gCamCapability[cameraId]->picture_sizes_tbl[gCamCapability[cameraId]->picture_sizes_tbl_cnt].width = width;
+        gCamCapability[cameraId]->picture_sizes_tbl[gCamCapability[cameraId]->picture_sizes_tbl_cnt].height = height;
+        gCamCapability[cameraId]->picture_sizes_tbl_cnt++;
+        if (!hasPatched) {
+            hasPatched = true;
+        }
+        ALOGD("patchPreviewSizes(): %dx%d patched", width, height);
+    }
+    if (!hasPatched) {
+        return;
+    }
+    //sort the array from big -> small using [Bubble Sort Algorithm]
+    for (size_t i = 0; i < gCamCapability[cameraId]->picture_sizes_tbl_cnt; i++) {
+        for (size_t j = 0; j <  gCamCapability[cameraId]->picture_sizes_tbl_cnt - i - 1; j++) {
+            if (gCamCapability[cameraId]->picture_sizes_tbl[j].width < gCamCapability[cameraId]->picture_sizes_tbl[j + 1].width
+                    || (gCamCapability[cameraId]->picture_sizes_tbl[j].width == gCamCapability[cameraId]->picture_sizes_tbl[j + 1].width
+                    && gCamCapability[cameraId]->picture_sizes_tbl[j].height < gCamCapability[cameraId]->picture_sizes_tbl[j + 1].height)) {
+
+                cam_dimension_t tmpSize = gCamCapability[cameraId]->picture_sizes_tbl[j];
+                int64_t tmpFps = gCamCapability[cameraId]->picture_min_duration[j];
+                gCamCapability[cameraId]->picture_sizes_tbl[j] = gCamCapability[cameraId]->picture_sizes_tbl[j + 1];
+                gCamCapability[cameraId]->picture_min_duration[j] = gCamCapability[cameraId]->picture_min_duration[j + 1];
+                gCamCapability[cameraId]->picture_sizes_tbl[j + 1] = tmpSize;
+                gCamCapability[cameraId]->picture_min_duration[j + 1] = tmpFps;
+            }
+        }
+    }
 }
 
 /*===========================================================================
@@ -6744,11 +6808,11 @@ camera_metadata_t* QCamera3HardwareInterface::translateCapabilityToMetadata(int 
     /* CDS default */
     char prop[PROPERTY_VALUE_MAX];
     memset(prop, 0, sizeof(prop));
-    property_get("persist.camera.CDS", prop, "Auto");
-    cam_cds_mode_type_t cds_mode = CAM_CDS_MODE_AUTO;
+    property_get("persist.camera.CDS", prop, "off");
+    cam_cds_mode_type_t cds_mode = CAM_CDS_MODE_OFF;
     cds_mode = lookupProp(CDS_MAP, METADATA_MAP_SIZE(CDS_MAP), prop);
     if (CAM_CDS_MODE_MAX == cds_mode) {
-        cds_mode = CAM_CDS_MODE_AUTO;
+        cds_mode = CAM_CDS_MODE_OFF;
     }
     //@note: force cds mode to be OFF when TNR is enabled.
     if (m_bTnrEnabled == true) {
@@ -6976,6 +7040,8 @@ int32_t QCamera3HardwareInterface::setHalFpsRange(const CameraMetadata &settings
     if (ADD_SET_PARAM_ENTRY_TO_BATCH(hal_metadata, CAM_INTF_PARM_FPS_RANGE, fps_range)) {
         rc = BAD_VALUE;
     }
+    if (rc == NO_ERROR)
+	mFpsRange = fps_range;
     CDBG("%s: fps: [%f %f] vid_fps: [%f %f]", __func__, fps_range.min_fps,
             fps_range.max_fps, fps_range.video_min_fps, fps_range.video_max_fps);
     return rc;
@@ -8149,12 +8215,10 @@ int32_t QCamera3HardwareInterface::extractSceneMode(
             hfrMode)) {
         rc = BAD_VALUE;
     }
-/*
     if (ADD_SET_PARAM_ENTRY_TO_BATCH(hal_metadata, CAM_INTF_PARM_BESTSHOT_MODE,
             sceneMode)) {
         rc = BAD_VALUE;
     }
-*/
     CDBG("%s: sceneMode: %d hfrMode: %d", __func__, sceneMode, hfrMode);
 
     return rc;

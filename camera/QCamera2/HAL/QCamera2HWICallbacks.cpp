@@ -1150,7 +1150,7 @@ void QCamera2HardwareInterface::nodisplay_preview_stream_cb_routine(
                     stream->bufDone(frame->buf_idx);
                     free(streamRelease);
                 }
-            }
+           }
         } else {
             stream->bufDone(frame->buf_idx);
         }
@@ -1226,7 +1226,7 @@ void QCamera2HardwareInterface::rdi_mode_stream_cb_routine(
                 cbArg.cb_type    = QCAMERA_DATA_CALLBACK;
                 cbArg.msg_type   = CAMERA_MSG_PREVIEW_FRAME;
                 cbArg.data       = preview_mem;
-		qcamera_stream_release_t *streamRelease = (qcamera_stream_release_t *)malloc(sizeof(qcamera_stream_release_t));
+                qcamera_stream_release_t *streamRelease = (qcamera_stream_release_t *)malloc(sizeof(qcamera_stream_release_t));
                 if (NULL != streamRelease) {
                     memset(streamRelease, 0, sizeof(qcamera_stream_release_t));
                     streamRelease->stream_handle = stream->getMyHandle();
@@ -1241,6 +1241,7 @@ void QCamera2HardwareInterface::rdi_mode_stream_cb_routine(
                         free(streamRelease);
                     }
                 }
+
             } else {
                 ALOGE("%s: preview_mem is NULL", __func__);
                 stream->bufDone(frame->buf_idx);
@@ -1274,7 +1275,7 @@ void QCamera2HardwareInterface::rdi_mode_stream_cb_routine(
             cbArg.ext1       = CAMERA_FRAME_DATA_FD;
             cbArg.ext2       = fd;
 #endif
-            qcamera_stream_release_t *streamRelease = (qcamera_stream_release_t *)malloc(sizeof(qcamera_stream_release_t));
+	    qcamera_stream_release_t *streamRelease = (qcamera_stream_release_t *)malloc(sizeof(qcamera_stream_release_t));
             if (NULL != streamRelease) {
                 memset(streamRelease, 0, sizeof(qcamera_stream_release_t));
                 streamRelease->stream_handle = stream->getMyHandle();
@@ -1289,6 +1290,7 @@ void QCamera2HardwareInterface::rdi_mode_stream_cb_routine(
                     free(streamRelease);
                 }
             }
+
         } else {
             CDBG_HIGH("%s: No need to process preview frame, return buffer", __func__);
             stream->bufDone(frame->buf_idx);
@@ -2981,12 +2983,12 @@ void * QCameraCbNotifier::cbNotifyRoutine(void * data)
                                         numOfSnapshotRcvd++;
                                         ALOGI("%s: [ZSL Retro] Num Snapshots Received = %d", __func__,
                                                 numOfSnapshotRcvd);
+					numOfSnapshotRcvd = 0;
                                         if (numOfSnapshotExpected > 0 &&
                                            (numOfSnapshotExpected == numOfSnapshotRcvd)) {
                                             ALOGI("%s: [ZSL Retro] Expected snapshot received = %d",
                                                     __func__, numOfSnapshotRcvd);
-                                            numOfSnapshotRcvd = 0;
-					    // notify HWI that snapshot is done
+                                            // notify HWI that snapshot is done
                                             pme->mParent->processSyncEvt(QCAMERA_SM_EVT_SNAPSHOT_DONE,
                                                                          NULL);
                                         }

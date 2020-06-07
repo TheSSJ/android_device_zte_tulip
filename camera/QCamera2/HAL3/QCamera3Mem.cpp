@@ -542,6 +542,13 @@ int QCamera3HeapMemory::cacheOps(uint32_t index, unsigned int cmd)
     if (index >= mBufferCount)
         return BAD_INDEX;
     return cacheOpsInternal(index, cmd, mPtr[index]);
+
+//    if(((cmd == ION_IOC_INV_CACHES) || (cmd == ION_IOC_CLEAN_INV_CACHES)) && needToInvalidate)
+//	rc = cacheOpsInternal(index, cmd, mPtr[index]);
+//    else if(cmd == ION_IOC_CLEAN_CACHES)
+//	rc = cacheOpsInternal(index, cmd, mPtr[index]);
+
+  //  return rc;
 }
 
 /*===========================================================================
@@ -906,7 +913,26 @@ int32_t QCamera3GrallocMemory::getFrameNumber(uint32_t index)
  *==========================================================================*/
 int QCamera3GrallocMemory::cacheOps(uint32_t index, unsigned int cmd)
 {
-    return cacheOpsInternal(index, cmd, mPtr[index]);
+    int rc = 0;
+    bool needToInvalidate = false;
+    struct private_handle_t *privateHandle = NULL;
+    privateHandle = (struct private_handle_t *)getBufferHandle(index);
+
+    if(privateHandle->flags &
+         (private_handle_t::PRIV_FLAGS_NON_CPU_WRITER)){
+           needToInvalidate = true;
+    }
+
+    if (index >= MM_CAMERA_MAX_NUM_FRAMES)
+        return -1;
+
+    if(((cmd == ION_IOC_INV_CACHES) || (cmd == ION_IOC_CLEAN_INV_CACHES)) && needToInvalidate)
+        rc = cacheOpsInternal(index, cmd, mPtr[index]);
+    else if(cmd == ION_IOC_CLEAN_CACHES)
+        rc = cacheOpsInternal(index, cmd, mPtr[index]);
+
+    return rc;
+//    return cacheOpsInternal(index, cmd, mPtr[index]);
 }
 
 /*===========================================================================

@@ -28,12 +28,14 @@
 #include "cam_types.h"
 #include "QCameraMem.h"
 #include "QCameraThermalAdapter.h"
-#include "CameraParameters.h"
+#include <CameraParameters.h>
 
 extern "C" {
 #include <mm_jpeg_interface.h>
 }
 
+using ::android::hardware::camera::common::V1_0::helper::CameraParameters;
+using ::android::hardware::camera::common::V1_0::helper::Size;
 using namespace android;
 
 namespace qcamera {
@@ -44,7 +46,6 @@ static const char ExifUndefinedPrefix[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 
 #define EXIF_ASCII_PREFIX_SIZE           8   //(sizeof(ExifAsciiPrefix))
 #define FOCAL_LENGTH_DECIMAL_PRECISION   100
-
 #define CAMERA_MIN_BATCH_COUNT           4
 
 class QCameraAdjustFPS
@@ -686,7 +687,6 @@ public:
     int32_t setHDRAEBracket(cam_exp_bracketing_t hdrBracket);
     bool isHDREnabled();
     bool isAutoHDREnabled();
-    bool isStaggeredVideoHDRSupported(){ return ( (m_pCapability->qcom_supported_feature_mask & CAM_QCOM_FEATURE_STAGGERED_VIDEO_HDR) > 0 );};
     int32_t stopAEBracket();
     int32_t updateFlash(bool commitSettings);
     int32_t updateRAW(cam_dimension_t max_dim);
@@ -1029,8 +1029,7 @@ private:
     static const QCameraMap<int> SEE_MORE_MODES_MAP[];
     static const QCameraMap<int> STILL_MORE_MODES_MAP[];
     static const QCameraMap<int> NOISE_REDUCTION_MODES_MAP[];
-    static const QCameraMap<cam_intf_video_hdr_mode_t> VIDEO_HDR_MODES_MAP[];
-
+    //static const QCameraMap<cam_intf_video_hdr_mode_t> VIDEO_HDR_MODES_MAP[];
     cam_capability_t *m_pCapability;
     mm_camera_vtbl_t *m_pCamOpsTbl;
     QCameraHeapMemory *m_pParamHeap;

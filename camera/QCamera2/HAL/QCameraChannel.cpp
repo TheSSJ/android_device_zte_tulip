@@ -957,8 +957,8 @@ int32_t QCameraReprocessChannel::addReprocStreamsFromSource(
     for (uint32_t i = 0; i < pSrcChannel->getNumOfStreams(); i++) {
         pStream = pSrcChannel->getStreamByIndex(i);
         if (pStream != NULL) {
-            uint32_t feature_mask = featureConfig.feature_mask;
-	    if (param.getofflineRAW() && !pStream->isTypeOf(CAM_STREAM_TYPE_RAW)) {
+	    uint32_t feature_mask = featureConfig.feature_mask;
+            if (param.getofflineRAW() && !pStream->isTypeOf(CAM_STREAM_TYPE_RAW)) {
                 //Skip all the stream other than RAW incase of offline of RAW
                 continue;
             }
@@ -1046,8 +1046,8 @@ int32_t QCameraReprocessChannel::addReprocStreamsFromSource(
                     streamInfo->pp_config, streamInfo->dim);
             streamInfo->reprocess_config = rp_cfg;
             streamInfo->reprocess_config.pp_feature_config = featureConfig;
-
 	    streamInfo->reprocess_config.pp_feature_config.feature_mask = feature_mask;
+
             cam_stream_type_t type = CAM_STREAM_TYPE_DEFAULT;
             if (offline) {
                 type = streamInfo->reprocess_config.offline.input_type;
@@ -1283,10 +1283,9 @@ int32_t QCameraReprocessChannel::doReprocessOffline(mm_camera_super_buf_t *frame
             param.type = CAM_STREAM_PARAM_TYPE_DO_REPROCESS;
             param.reprocess.buf_index = buf_index;
             param.reprocess.frame_idx = frame->bufs[i]->frame_idx;
-//            param.reprocess.is_uv_subsampled = frame->is_uv_subsampled;
 	    if(meta_buf != NULL) {
-	       param.reprocess.meta_present = 1;
-               param.reprocess.meta_buf_index = meta_buf_index;
+            	param.reprocess.meta_present = 1;
+            	param.reprocess.meta_buf_index = meta_buf_index;
 	    }
             rc = pStream->setParameter(param);
             if (rc != NO_ERROR) {

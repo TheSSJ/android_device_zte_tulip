@@ -613,21 +613,13 @@ int32_t QCameraStateMachine::procEvtPreviewStoppedState(qcamera_sm_evt_enum_t ev
         ALOGV("Free video handle %d %d", evt, m_state);
         QCameraVideoMemory::closeNativeHandle((const void *)payload);
     }
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_START_RECORDING:
-	[[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_SNAPSHOT:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_TAKE_PICTURE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -639,7 +631,6 @@ int32_t QCameraStateMachine::procEvtPreviewStoppedState(qcamera_sm_evt_enum_t ev
         }
         break;
     case QCAMERA_SM_EVT_START_AUTO_FOCUS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_CANCEL_PICTURE:
         {
             // no op needed here
@@ -1070,25 +1061,15 @@ int32_t QCameraStateMachine::procEvtPreviewReadyState(qcamera_sm_evt_enum_t evt,
         ALOGV("Free video handle %d %d", evt, m_state);
         QCameraVideoMemory::closeNativeHandle((const void *)payload);
     }
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_SNAPSHOT:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_CANCEL_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -1152,9 +1133,7 @@ int32_t QCameraStateMachine::procEvtPreviewReadyState(qcamera_sm_evt_enum_t evt,
        }
        break;
     case QCAMERA_SM_EVT_JPEG_EVT_NOTIFY:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_THERMAL_NOTIFY:
-        [[fallthrough]];
     default:
         ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
         break;
@@ -1640,7 +1619,6 @@ int32_t QCameraStateMachine::procEvtPreviewingState(qcamera_sm_evt_enum_t evt,
         ALOGD("Free video handle %d %d", evt, m_state);
         QCameraVideoMemory::closeNativeHandle((const void *)payload);
     }
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -1655,12 +1633,12 @@ int32_t QCameraStateMachine::procEvtPreviewingState(qcamera_sm_evt_enum_t evt,
         [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_RECORDING:
         {
-	result.status = NO_ERROR;
-	result.request_api = evt;
-	result.result_type = QCAMERA_API_RESULT_TYPE_DEF;
-	 m_parent->signalAPIResult(&result);
-	}
-	[[fallthrough]];
+        result.status = NO_ERROR;
+        result.request_api = evt;
+        result.result_type = QCAMERA_API_RESULT_TYPE_DEF;
+        m_parent->signalAPIResult(&result);
+       }
+       [[fallthrough]];
     case QCAMERA_SM_EVT_EVT_INTERNAL:
         {
             qcamera_sm_internal_evt_payload_t *internal_evt =
@@ -1776,7 +1754,6 @@ int32_t QCameraStateMachine::procEvtPreviewingState(qcamera_sm_evt_enum_t evt,
         }
        break;
     case QCAMERA_SM_EVT_JPEG_EVT_NOTIFY:
-        [[fallthrough]];
     default:
         ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
         break;
@@ -1809,65 +1786,35 @@ int32_t QCameraStateMachine::procEvtPrepareSnapshotState(qcamera_sm_evt_enum_t e
     ALOGV("%s: event (%d)", __func__, evt);
     switch (evt) {
     case QCAMERA_SM_EVT_SET_PREVIEW_WINDOW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_SET_CALLBACKS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_ENABLE_MSG_TYPE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_DISABLE_MSG_TYPE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_MSG_TYPE_ENABLED:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_SET_PARAMS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_GET_PARAMS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PUT_PARAMS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_NODISPLAY_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREVIEW_ENABLED:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREVIEW_RESTART_NEENED:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RECORDING_ENABLED:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STORE_METADATA_IN_BUFS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_DUMP:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_AUTO_FOCUS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_AUTO_FOCUS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_SNAPSHOT:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_SEND_COMMAND:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_CANCEL_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE_RECORIDNG_FRAME:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -1979,7 +1926,6 @@ int32_t QCameraStateMachine::procEvtPrepareSnapshotState(qcamera_sm_evt_enum_t e
         }
         break;
     case QCAMERA_SM_EVT_JPEG_EVT_NOTIFY:
-        [[fallthrough]];
     default:
         ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
         break;
@@ -2075,7 +2021,6 @@ int32_t QCameraStateMachine::procEvtPicTakingState(qcamera_sm_evt_enum_t evt,
         }
         break;
     case QCAMERA_SM_EVT_COMMIT_PARAMS:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_COMMIT_STOP_PREVIEW:
         {
             rc = m_parent->commitParameterChanges();
@@ -2116,8 +2061,8 @@ int32_t QCameraStateMachine::procEvtPicTakingState(qcamera_sm_evt_enum_t evt,
     case QCAMERA_SM_EVT_STOP_PREVIEW:
         {
             // cancel picture first
-            rc = m_parent->cancelPicture();
             m_state = QCAMERA_SM_STATE_PREVIEW_STOPPED;
+            rc = m_parent->cancelPicture();
 
             result.status = rc;
             result.request_api = evt;
@@ -2267,25 +2212,15 @@ int32_t QCameraStateMachine::procEvtPicTakingState(qcamera_sm_evt_enum_t evt,
         }
         break;
     case QCAMERA_SM_EVT_PREPARE_SNAPSHOT:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_STOP_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE_RECORIDNG_FRAME:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_NODISPLAY_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -2472,9 +2407,7 @@ int32_t QCameraStateMachine::procEvtRecordingState(qcamera_sm_evt_enum_t evt,
     ALOGV("%s: event (%d)", __func__, evt);
     switch (evt) {
     case QCAMERA_SM_EVT_PREPARE_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_SET_PREVIEW_WINDOW:
         {
             // WA: CTS test VideoSnapshot will try to
@@ -2704,11 +2637,8 @@ int32_t QCameraStateMachine::procEvtRecordingState(qcamera_sm_evt_enum_t evt,
         }
         break;
     case QCAMERA_SM_EVT_PRE_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_RECORDING:
         {
             // no ops here
@@ -2778,9 +2708,7 @@ int32_t QCameraStateMachine::procEvtRecordingState(qcamera_sm_evt_enum_t evt,
         }
         break;
     case QCAMERA_SM_EVT_CANCEL_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_NODISPLAY_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -2881,7 +2809,6 @@ int32_t QCameraStateMachine::procEvtRecordingState(qcamera_sm_evt_enum_t evt,
         }
        break;
     case QCAMERA_SM_EVT_JPEG_EVT_NOTIFY:
-        [[fallthrough]];
     default:
         ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
         break;
@@ -3183,25 +3110,15 @@ int32_t QCameraStateMachine::procEvtVideoPicTakingState(qcamera_sm_evt_enum_t ev
         }
         break;
     case QCAMERA_SM_EVT_PRE_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_STOP_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RESTART_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_NODISPLAY_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_SNAPSHOT:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PRE_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_TAKE_PICTURE:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -3730,15 +3647,10 @@ int32_t QCameraStateMachine::procEvtPreviewPicTakingState(qcamera_sm_evt_enum_t 
         }
         break;
     case QCAMERA_SM_EVT_STOP_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_PREPARE_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_START_NODISPLAY_PREVIEW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_SET_PREVIEW_WINDOW:
-        [[fallthrough]];
     case QCAMERA_SM_EVT_RELEASE:
         {
             ALOGE("%s: Error!! cannot handle evt(%d) in state(%d)", __func__, evt, m_state);
@@ -3944,7 +3856,6 @@ bool QCameraStateMachine::isRecording()
 {
     switch (m_state) {
     case QCAMERA_SM_STATE_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_VIDEO_PIC_TAKING:
         return true;
     default:
@@ -3966,15 +3877,10 @@ bool QCameraStateMachine::isPreviewRunning()
 {
     switch (m_state) {
     case QCAMERA_SM_STATE_PREVIEWING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_RECORDING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_VIDEO_PIC_TAKING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_PREVIEW_PIC_TAKING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_PREPARE_SNAPSHOT:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_PREVIEW_READY:
         return true;
     default:
@@ -4016,9 +3922,7 @@ bool QCameraStateMachine::isCaptureRunning()
 {
     switch (m_state) {
     case QCAMERA_SM_STATE_PIC_TAKING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_VIDEO_PIC_TAKING:
-        [[fallthrough]];
     case QCAMERA_SM_STATE_PREVIEW_PIC_TAKING:
         return true;
     default:
