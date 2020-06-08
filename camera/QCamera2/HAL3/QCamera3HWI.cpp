@@ -5166,60 +5166,6 @@ cam_dimension_t QCamera3HardwareInterface::calcMaxJpegDim()
 }
 
 /*===========================================================================
- * FUNCTION   : patchPreviewSizes
- *
- * DESCRIPTION: patch s2 missed preview-sizes make sure all preview-sizes included
- *     in picture-sizes list
- *==========================================================================*/
-
-void QCamera3HardwareInterface::patchPreviewSizes(uint32_t cameraId) {
-    bool hasPatched = false;
-    for (int i = gCamCapability[cameraId]->preview_sizes_tbl_cnt - 1; i >= 0; i--) {
-        int32_t width = gCamCapability[cameraId]->preview_sizes_tbl[i].width;
-        int32_t height = gCamCapability[cameraId]->preview_sizes_tbl[i].height;
-        size_t count = MIN(gCamCapability[cameraId]->picture_sizes_tbl_cnt, MAX_SIZES_CNT);
-        bool sizeFound = false;
-        for (size_t i = 0; i < count; i++) {
-            if ((width == gCamCapability[cameraId]->picture_sizes_tbl[i].width) &&
-                     (height == gCamCapability[cameraId]->picture_sizes_tbl[i].height)) {
-                sizeFound = true;
-                break;
-            }
-        }
-        if (sizeFound) {
-             ALOGI("patchPreviewSizes(): %dx%d already exists don't need patch it", width, height);
-             continue;
-        }
-        gCamCapability[cameraId]->picture_sizes_tbl[gCamCapability[cameraId]->picture_sizes_tbl_cnt].width = width;
-        gCamCapability[cameraId]->picture_sizes_tbl[gCamCapability[cameraId]->picture_sizes_tbl_cnt].height = height;
-        gCamCapability[cameraId]->picture_sizes_tbl_cnt++;
-        if (!hasPatched) {
-            hasPatched = true;
-        }
-        ALOGD("patchPreviewSizes(): %dx%d patched", width, height);
-    }
-    if (!hasPatched) {
-        return;
-    }
-    //sort the array from big -> small using [Bubble Sort Algorithm]
-    for (size_t i = 0; i < gCamCapability[cameraId]->picture_sizes_tbl_cnt; i++) {
-        for (size_t j = 0; j <  gCamCapability[cameraId]->picture_sizes_tbl_cnt - i - 1; j++) {
-            if (gCamCapability[cameraId]->picture_sizes_tbl[j].width < gCamCapability[cameraId]->picture_sizes_tbl[j + 1].width
-                    || (gCamCapability[cameraId]->picture_sizes_tbl[j].width == gCamCapability[cameraId]->picture_sizes_tbl[j + 1].width
-                    && gCamCapability[cameraId]->picture_sizes_tbl[j].height < gCamCapability[cameraId]->picture_sizes_tbl[j + 1].height)) {
-
-                cam_dimension_t tmpSize = gCamCapability[cameraId]->picture_sizes_tbl[j];
-                int64_t tmpFps = gCamCapability[cameraId]->picture_min_duration[j];
-                gCamCapability[cameraId]->picture_sizes_tbl[j] = gCamCapability[cameraId]->picture_sizes_tbl[j + 1];
-                gCamCapability[cameraId]->picture_min_duration[j] = gCamCapability[cameraId]->picture_min_duration[j + 1];
-                gCamCapability[cameraId]->picture_sizes_tbl[j + 1] = tmpSize;
-                gCamCapability[cameraId]->picture_min_duration[j + 1] = tmpFps;
-            }
-        }
-    }
-}
-
-/*===========================================================================
  * FUNCTION   : initStaticMetadata
  *
  * DESCRIPTION: initialize the static metadata
