@@ -78,7 +78,7 @@ typedef struct {
     mm_camera_super_buf_t *src_metadata;
 } qcamera_hal3_pp_data_t;
 
-#define MAX_HAL3_EXIF_TABLE_ENTRIES 22
+#define MAX_HAL3_EXIF_TABLE_ENTRIES 50
 class QCamera3Exif
 {
 public:

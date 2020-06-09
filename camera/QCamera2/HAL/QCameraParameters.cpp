@@ -197,6 +197,7 @@ const char QCameraParameters::KEY_QC_CACHE_VIDEO_BUFFERS[] = "cache-video-buffer
 const char QCameraParameters::KEY_QC_LONG_SHOT[] = "long-shot";
 const char QCameraParameters::KEY_QC_INSTANT_AEC[] = "instant-aec";
 const char QCameraParameters::KEY_QC_INSTANT_CAPTURE[] = "instant-capture";
+const char QCameraParameters::KEY_QC_INITIAL_EXPOSURE_INDEX[] = "initial-exp-index";
 
 // Values for effect settings.
 const char QCameraParameters::EFFECT_EMBOSS[] = "emboss";
@@ -4042,7 +4043,10 @@ int32_t QCameraParameters::setRecordingHint(const QCameraParameters& params)
                 updateParamEntry(KEY_RECORDING_HINT, str);
                 setRecordingHintValue(value);
                 if (getFaceDetectionOption() == true) {
-                    setFaceDetection(value > 0 ? false : true, false);
+                    if (!isFDInVideoEnabled())
+			setFaceDetection(value > 0 ? false : true, false);
+		    else
+			setFaceDetection(true, false);
                 }
                 if (m_bDISEnabled) {
                     CDBG_HIGH("%s: %d: Setting DIS value again", __func__, __LINE__);
@@ -4749,6 +4753,70 @@ int32_t QCameraParameters::setDualLedCalibration()
 }
 
 /*===========================================================================
+ * FUNCTION   : checkFeatureConcurrency
+ *
+ * DESCRIPTION: check if there is a feature concurrency issue with advanced
+ *              camera features
+ *
+ * PARAMETERS : None
+ *
+ * RETURN     : int32_t type of status
+ *              NO_ERROR  -- success
+ *              none-zero failure code
+ *==========================================================================*/
+int32_t QCameraParameters::checkFeatureConcurrency()
+{
+    int32_t rc = NO_ERROR;
+    uint32_t advancedFeatEnableBit = 0;
+    if (isStillMoreEnabled()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_STILLMORE;
+    }
+    if (isHDREnabled()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_HDR;
+    }
+    if (isChromaFlashEnabled()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_CHROMA_FLASH;
+    }
+    if (isUbiFocusEnabled()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_UBIFOCUS;
+    }
+    if (isTruePortraitEnabled()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_TRUEPORTRAIT;
+    }
+    if (isOptiZoomEnabled()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_OPTIZOOM;
+    }
+    if (isUbiRefocus()) {
+        advancedFeatEnableBit |= CAM_QCOM_FEATURE_REFOCUS;
+    }
+
+    if(m_bRecordingHint_new) {
+        advancedFeatEnableBit &= ~CAM_QCOM_FEATURE_STILLMORE;
+
+        if (advancedFeatEnableBit) {
+            ALOGE("%s:%d] Failed recording mode bit 0x%x", __func__, __LINE__,
+                   advancedFeatEnableBit);
+            rc = BAD_TYPE;
+        }
+    } else if (m_bZslMode_new) {
+        /* ZSL mode check if 2 bits are set */
+        if (advancedFeatEnableBit & (advancedFeatEnableBit - 1)) {
+            ALOGE("%s:%d] Failed ZSL mode bit 0x%x", __func__, __LINE__, advancedFeatEnableBit);
+            rc = BAD_TYPE;
+        }
+    } else { /* non-ZSL mode */
+        advancedFeatEnableBit &= ~CAM_QCOM_FEATURE_HDR;
+
+        /* non-ZSL mode check if 1 bit is set */
+        if (advancedFeatEnableBit) {
+            ALOGE("%s:%d] Failed non-ZSL mode bit 0x%x", __func__, __LINE__, advancedFeatEnableBit);
+            rc = BAD_TYPE;
+        }
+    }
+    return rc;
+}
+
+/*===========================================================================
  * FUNCTION   : updateParameters
  *
  * DESCRIPTION: update parameters from user setting
@@ -4845,6 +4913,7 @@ int32_t QCameraParameters::updateParameters(QCameraParameters& params,
     if ((rc = setCacheVideoBuffers(params)))            final_rc = rc;
     if ((rc = setInstantCapture(params)))               final_rc = rc;
     if ((rc = setInstantAEC(params)))                   final_rc = rc;
+    if ((rc = setInitialExposureIndex(params)))         final_rc = rc;
 
     // update live snapshot size after all other parameters are set
     if ((rc = setLiveSnapshotSize(params)))             final_rc = rc;
@@ -5922,6 +5991,13 @@ TRANS_INIT_DONE:
  *==========================================================================*/
 void QCameraParameters::deinit()
 {
+    if (NULL != m_pParamHeap) {
+        m_pParamHeap->deallocate();
+        delete m_pParamHeap;
+        m_pParamHeap = NULL;
+        m_pParamBuf = NULL;
+    }
+
     if (!m_bInited) {
         return;
     }
@@ -5942,12 +6018,6 @@ void QCameraParameters::deinit()
     }
 
     m_pCapability = NULL;
-    if (NULL != m_pParamHeap) {
-        m_pParamHeap->deallocate();
-        delete m_pParamHeap;
-        m_pParamHeap = NULL;
-        m_pParamBuf = NULL;
-    }
     if (NULL != m_pRelCamSyncHeap) {
         m_pRelCamSyncHeap->deallocate();
         delete m_pRelCamSyncHeap;
@@ -7645,6 +7715,56 @@ int32_t QCameraParameters::setInstantAEC(const QCameraParameters& params)
 }
 
 /*===========================================================================
+ * FUNCTION   : setInitialExposureIndex
+ *
+ * DESCRIPTION: Set initial exposure index value
+ *
+ * PARAMETERS :
+ *   @params  : user setting parameters
+ *
+ * RETURN     : int32_t type of status
+ *              NO_ERROR  -- success
+ *              none-zero failure code
+ *==========================================================================*/
+int32_t QCameraParameters::setInitialExposureIndex(const QCameraParameters& params)
+{
+    int32_t rc = NO_ERROR;
+    int value = -1;
+    const char *str = params.get(KEY_QC_INITIAL_EXPOSURE_INDEX);
+    const char *prev_str = get(KEY_QC_INITIAL_EXPOSURE_INDEX);
+    if (str) {
+        if ((prev_str == NULL) || (strcmp(str, prev_str) != 0)) {
+            value = atoi(str);
+            CDBG("%s: Set initial exposure index value from param = %d", __func__, value);
+           if (value >= 0)
+                updateParamEntry(KEY_QC_INITIAL_EXPOSURE_INDEX, str);
+        }
+    } else {
+        char prop[PROPERTY_VALUE_MAX];
+        memset(prop, 0, sizeof(prop));
+        property_get("persist.camera.initial.exp.val", prop, "");
+        if ((strlen(prop) > 0) &&
+                ( (prev_str == NULL) || (strcmp(prop, prev_str) != 0))) {
+            value = atoi(prop);
+            CDBG("%s: Set initial exposure index value from setprop = %d", __func__, value);
+            if (value >= 0)
+                updateParamEntry(KEY_QC_INITIAL_EXPOSURE_INDEX, prop);
+        }
+    }
+
+     if (value >= 0) {
+        if (ADD_SET_PARAM_ENTRY_TO_BATCH(m_pParamBuf,
+                CAM_INTF_PARM_INITIAL_EXPOSURE_INDEX, (uint32_t)value)) {
+            ALOGE("%s:Failed to update initial exposure index value", __func__);
+            rc = BAD_VALUE;
+        }
+     } else
+        CDBG("%s: Invalid value for initial exposure index value %d", __func__, value);
+
+    return rc;
+}
+
+/*===========================================================================
  * FUNCTION   : setDISValue
  *
  * DESCRIPTION: set DIS value
@@ -9132,7 +9252,7 @@ int32_t QCameraParameters::updateFlash(bool commitSettings)
     }
 
     if (isHDREnabled() || m_bAeBracketingEnabled || m_bAFBracketingOn ||
-          m_bOptiZoomOn || m_bReFocusOn) {
+          m_bOptiZoomOn || m_bReFocusOn || m_bStillMoreOn) {
         value = CAM_FLASH_MODE_OFF;
     } else if (m_bChromaFlashOn) {
         value = CAM_FLASH_MODE_ON;
@@ -12267,7 +12387,7 @@ bool QCameraParameters::setStreamConfigure(bool isCapture,
 
         // Analysis stream is needed in all use cases of DCRF and needed only in camera mode in
         // in non DCRF use cases
-        if ((getDcrf() == true) || (getRecordingHintValue() != true)) {
+        if ( (getDcrf() == true) || (getRecordingHintValue() != true) || (isFDInVideoEnabled()) ) {
             stream_config_info.type[stream_config_info.num_streams] =
                     CAM_STREAM_TYPE_ANALYSIS;
             getStreamDimension(CAM_STREAM_TYPE_ANALYSIS,
@@ -13404,6 +13524,26 @@ int32_t QCameraParameters::setInstantAEC(uint8_t enable, bool initCommit)
     CDBG_HIGH(" setInstantAEC set value %d", enable);
     m_bInstantAEC = enable;
     return rc;
+}
+
+/*===========================================================================
+ * FUNCTION   : isFDInVideoEnabled
+ *
+ * DESCRIPTION: FD in Video change
+ *
+ * PARAMETERS : none
+ *
+ * RETURN     : TRUE  : If FD in Video enabled
+ *              FALSE : If FD in Video disabled
+ *==========================================================================*/
+bool QCameraParameters::isFDInVideoEnabled()
+{
+    char value[PROPERTY_VALUE_MAX];
+    bool fdvideo = FALSE;
+    property_get("persist.camera.fdvideo", value, "0");
+    fdvideo = (atoi(value) > 0) ? TRUE : FALSE;
+    CDBG("%s: FD in Video enabled : %d", __func__, fdvideo);
+    return fdvideo;
 }
 
 }; // namespace qcamera

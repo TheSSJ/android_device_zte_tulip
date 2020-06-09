@@ -1192,10 +1192,16 @@ typedef enum {
     NEED_FUTURE_FRAME,
 } cam_prep_snapshot_state_t;
 
-#define CC_GAINS_COUNT  4
+typedef enum {
+    CC_RED_GAIN,
+    CC_GREEN_RED_GAIN,
+    CC_GREEN_BLUE_GAIN,
+    CC_BLUE_GAIN,
+    CC_GAINS_MAX
+} cam_cc_gains_type_t;
 
 typedef struct {
-    float gains[CC_GAINS_COUNT];
+    float gains[CC_GAINS_MAX];
 } cam_color_correct_gains_t;
 
 typedef struct {
@@ -1853,6 +1859,7 @@ typedef enum {
     CAM_INTF_AF_STATE_TRANSITION, /* 196 */
     /* Param for enabling instant aec*/
     CAM_INTF_PARM_INSTANT_AEC,
+    CAM_INTF_PARM_INITIAL_EXPOSURE_INDEX,
 //    ZTE_META_01,
 //    ZTE_META_02,
 //    ZTE_META_03,

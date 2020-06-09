@@ -1796,7 +1796,7 @@ QCameraGrallocMemory::QCameraGrallocMemory(camera_request_memory memory, void* c
     mMappableBuffers = 0;
     mWindow = NULL;
     mWidth = mHeight = mStride = mScanline = mUsage = 0;
-    mFormat = HAL_PIXEL_FORMAT_YCrCb_420_SP;
+    mDisplayFormat = HAL_PIXEL_FORMAT_YCrCb_420_SP;
     mCallbackCookie = cbCookie;
     mGetMemory = memory;
     for (int i = 0; i < MM_CAMERA_MAX_NUM_FRAMES; i ++) {
@@ -1837,16 +1837,17 @@ QCameraGrallocMemory::~QCameraGrallocMemory()
  * RETURN     : none
  *==========================================================================*/
 void QCameraGrallocMemory::setWindowInfo(preview_stream_ops_t *window,
-        int width, int height, int stride, int scanline, int format, int maxFPS, int usage)
+        int width, int height, int stride, int scanline, int format, int maxFPS, int usage, int backendFormat)
 {
     mWindow = window;
     mWidth = width;
     mHeight = height;
     mStride = stride;
     mScanline = scanline;
-    mFormat = format;
+    mDisplayFormat = format;
     mUsage = usage;
     setMaxFPS(maxFPS);
+    mCamFormat = backendFormat;
 }
 
 /*===========================================================================
@@ -2133,7 +2134,7 @@ int QCameraGrallocMemory::allocate(uint8_t count, size_t /*size*/,
          goto end;
     }
 
-    err = mWindow->set_buffers_geometry(mWindow, mStride, mScanline, mFormat);
+    err = mWindow->set_buffers_geometry(mWindow, mStride, mScanline, mDisplayFormat);
     if (err != 0) {
          ALOGE("%s: set_buffers_geometry failed: %s (%d)",
                __func__, strerror(-err), -err);
@@ -2160,7 +2161,7 @@ int QCameraGrallocMemory::allocate(uint8_t count, size_t /*size*/,
     }
     CDBG_HIGH("%s: usage = %d, geometry: %p, %d, %d, %d, %d, %d",
           __func__, gralloc_usage, mWindow, mWidth, mHeight, mStride,
-          mScanline, mFormat);
+          mScanline, mDisplayFormat);
 
     mBufferCount = count;
     if ((count < mMappableBuffers) || (mMappableBuffers == 0)) {

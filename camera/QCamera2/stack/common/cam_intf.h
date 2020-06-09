@@ -915,7 +915,7 @@ typedef struct {
     INCLUDE(CAM_INTF_PARM_FLIP,                         int32_t,                     1);
     INCLUDE(CAM_INTF_AF_STATE_TRANSITION,               uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_INSTANT_AEC,                  uint8_t,                     1);
-//    INCLUDE(CAM_INTF_PARM_INITIAL_EXPOSURE_INDEX,       uint32_t,                    1);
+    INCLUDE(CAM_INTF_PARM_INITIAL_EXPOSURE_INDEX,       uint32_t,                    1);
 //    INCLUDE(ZTE_META_01,				uint32_t,		     1);
 //    INCLUDE(ZTE_META_02,				uint32_t,		     1);
 //    INCLUDE(ZTE_META_03,				uint32_t,		     1);
